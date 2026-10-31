@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { philosophy } from "@/data/site";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,9 @@ import { TechIcon } from "@/components/ui/TechIcon";
 
 // Starting window (percent insets of the stage) for the small "peek" box in the centre.
 const BOX = { top: 34, right: 39.5, bottom: 34, left: 38.5 };
+// Phones: a wider, taller window so the peek shows readable words instead of a sliver.
+const BOX_MOBILE = { top: 30, right: 14, bottom: 30, left: 14 };
+const MOBILE_MAX = 640;
 const HEADER_LABEL = "Skills & Philosophy";
 const easeInCubic = (v: number) => v * v * v;
 
@@ -27,15 +30,24 @@ export function SkillsPhilosophy() {
   const stageRef = useRef<HTMLDivElement>(null);
   // Stage size in px, so the arc is drawn in real pixels (keeps the stroke solid and even).
   const [size, setSize] = useState({ w: 1440, h: 800 });
+  // Motion value (not state) so the window insets switch without waiting for the next scroll tick.
+  const mobile = useMotionValue(0);
   useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(([e]) => setSize({ w: e.contentRect.width, h: e.contentRect.height }));
+    const ro = new ResizeObserver(([e]) => {
+      setSize({ w: e.contentRect.width, h: e.contentRect.height });
+      mobile.set(e.contentRect.width < MOBILE_MAX ? 1 : 0);
+    });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
   const { w, h } = size;
-  const arc = `M ${w * 0.14} ${-h * 0.02} Q ${w * 0.16} ${h * 0.4} ${(w * BOX.left) / 100} ${h * 0.5}`;
+  const box = w < MOBILE_MAX ? BOX_MOBILE : BOX;
+  const arc =
+    w < MOBILE_MAX
+      ? `M ${w * 0.04} ${-h * 0.02} Q ${w * 0.05} ${h * 0.4} ${(w * box.left) / 100} ${h * 0.5}`
+      : `M ${w * 0.14} ${-h * 0.02} Q ${w * 0.16} ${h * 0.4} ${(w * box.left) / 100} ${h * 0.5}`;
   const { scrollYProgress: p } = useScroll({ target: trackRef, offset: ["start end", "end end"] });
   // Exit: the pinned stage drifts up slower than the page while the next section covers it.
   const { scrollYProgress: exit } = useScroll({ target: exitRef, offset: ["start end", "end end"] });
@@ -47,14 +59,17 @@ export function SkillsPhilosophy() {
   const boxOpacity = useTransform(p, [0.2, 0.26], [0, 1]);
   // Growth: slow at first, then rushes to full screen.
   const grow = useTransform(p, [0.4, 0.82], [0, 1], { ease: easeInCubic });
-  const inset = (side: keyof typeof BOX) => useTransform(grow, (g) => `${BOX[side] * (1 - g)}%`);
+  const pick = (m: number) => (m ? BOX_MOBILE : BOX);
+  const inset = (side: keyof typeof BOX) =>
+    useTransform([grow, mobile], ([g, m]) => `${pick(m as number)[side] * (1 - (g as number))}%`);
   const top = inset("top");
   const right = inset("right");
   const bottom = inset("bottom");
   const left = inset("left");
-  const clipPath = useTransform(grow, (g) => {
-    const k = 1 - g;
-    return `inset(${BOX.top * k}% ${BOX.right * k}% ${BOX.bottom * k}% ${BOX.left * k}%)`;
+  const clipPath = useTransform([grow, mobile], ([g, m]) => {
+    const b = pick(m as number);
+    const k = 1 - (g as number);
+    return `inset(${b.top * k}% ${b.right * k}% ${b.bottom * k}% ${b.left * k}%)`;
   });
   const frameFade = useTransform(grow, [0.9, 1], [1, 0]);
   const frameOpacity = useTransform([boxOpacity, frameFade], ([a, b]) => (a as number) * (b as number));

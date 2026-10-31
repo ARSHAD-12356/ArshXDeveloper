@@ -140,7 +140,7 @@ export function Contact() {
       data-header-theme="light"
       data-header-label="06 / Contact"
       aria-labelledby="contact-title"
-      className="theme-light relative bg-[#fbfdfc] text-ink min-h-[100svh] flex flex-col justify-center py-20 sm:py-24 lg:py-28 xl:py-32 overflow-hidden selection:bg-emerald-500 selection:text-white"
+      className="theme-light relative bg-[#fbfdfc] text-ink min-h-[100svh] flex flex-col justify-center py-16 sm:py-24 lg:py-28 xl:py-32 overflow-hidden selection:bg-emerald-500 selection:text-white"
     >
       {/* Background Decorative Ambient Curve and Lighting matching reference */}
       <AmbientCurve />
@@ -337,12 +337,12 @@ export function Contact() {
 
           {/* Right Column: Large Rounded Form Panel */}
           <div className="lg:col-span-6 relative">
-            <div className="relative rounded-[32px] sm:rounded-[40px] border border-black/[0.06] bg-white/95 backdrop-blur-xl p-6 sm:p-10 md:p-12 xl:p-14 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_30px_80px_-30px_rgba(0,0,0,0.18),0_0_90px_-20px_rgba(16,185,129,0.18)] overflow-hidden before:pointer-events-none before:absolute before:inset-x-12 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-emerald-400/70 before:to-transparent">
+            <div className="relative rounded-[32px] sm:rounded-[40px] border border-black/[0.06] bg-white/95 backdrop-blur-xl p-5 sm:p-10 md:p-12 xl:p-14 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_30px_80px_-30px_rgba(0,0,0,0.18),0_0_90px_-20px_rgba(16,185,129,0.18)] overflow-hidden before:pointer-events-none before:absolute before:inset-x-12 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-emerald-400/70 before:to-transparent">
               {/* Decorative Faceted Origami Paper Plane Illustration matching reference */}
-              <PaperPlane className="absolute top-2 right-4 sm:right-10 w-28 h-28 sm:w-36 sm:h-36 pointer-events-none select-none" />
+              <PaperPlane className="absolute top-3 right-3 w-16 h-16 sm:top-2 sm:right-10 sm:w-36 sm:h-36 pointer-events-none select-none" />
 
               {/* Panel Top Indicator */}
-              <div className="flex items-center gap-2.5 mb-5">
+              <div className="flex items-center gap-2.5 mb-3 sm:mb-5">
                 <span className="h-2 w-2 rounded-full bg-[#10b981] shadow-[0_0_6px_#10b981]" />
                 <span className="font-mono text-[11px] font-bold tracking-[0.24em] text-black/55 uppercase">
                   SEND A MESSAGE
@@ -350,10 +350,10 @@ export function Contact() {
               </div>
 
               {/* Form Title & Subtitle */}
-              <h3 className="font-display text-[1.85rem] sm:text-4xl md:text-[2.75rem] leading-[1.05] font-bold text-[#0a0d0c] tracking-tight mb-3 max-w-[80%]">
+              <h3 className="font-display text-[1.6rem] sm:text-4xl md:text-[2.75rem] leading-[1.05] font-bold text-[#0a0d0c] tracking-tight mb-2 sm:mb-3 max-w-[85%] sm:max-w-[80%]">
                 Have a Project in Mind?
               </h3>
-              <p className="text-sm sm:text-base text-black/55 mb-9 sm:mb-11">
+              <p className="text-sm sm:text-base text-black/55 mb-6 sm:mb-11">
                 Fill out the form and I&apos;ll get back to you within 24 hours.
               </p>
 
@@ -395,7 +395,7 @@ export function Contact() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="space-y-4 sm:space-y-5"
+                    className="space-y-3 sm:space-y-5"
                   >
                     {/* Honeypot field for anti-spam */}
                     <input
@@ -410,12 +410,12 @@ export function Contact() {
                     />
 
                     {/* Row 1: Your Name & Your Email */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
                       {/* Name Field */}
                       <div>
                         <div
                           className={cn(
-                            "flex items-center gap-3 px-4 sm:px-5 py-3.5 sm:py-4 rounded-2xl border bg-[#f8faf9] focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all",
+                            "flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-4 rounded-xl sm:rounded-2xl border bg-[#f8faf9] focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all",
                             errors.name && touched.name
                               ? "border-red-500 bg-red-50/[0.15]"
                               : "border-black/[0.08] focus-within:border-emerald-500"
@@ -444,7 +444,7 @@ export function Contact() {
                       <div>
                         <div
                           className={cn(
-                            "flex items-center gap-3 px-4 sm:px-5 py-3.5 sm:py-4 rounded-2xl border bg-[#f8faf9] focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all",
+                            "flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-4 rounded-xl sm:rounded-2xl border bg-[#f8faf9] focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all",
                             errors.email && touched.email
                               ? "border-red-500 bg-red-50/[0.15]"
                               : "border-black/[0.08] focus-within:border-emerald-500"
@@ -471,9 +471,9 @@ export function Contact() {
                     </div>
 
                     {/* Row 2: Project Type (Dropdown) & Budget (Dropdown) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
                       {/* Project Type Dropdown */}
-                      <div className="relative flex items-center px-4 sm:px-5 py-3.5 sm:py-4 rounded-2xl border border-black/[0.08] bg-[#f8faf9] focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
+                      <div className="relative flex items-center px-4 sm:px-5 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-black/[0.08] bg-[#f8faf9] focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
                         <svg className="h-4 w-4 text-black/40 shrink-0 mr-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <rect width="20" height="14" x="2" y="7" rx="2" />
                           <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
@@ -498,7 +498,7 @@ export function Contact() {
                       </div>
 
                       {/* Budget Dropdown */}
-                      <div className="relative flex items-center px-4 sm:px-5 py-3.5 sm:py-4 rounded-2xl border border-black/[0.08] bg-[#f8faf9] focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
+                      <div className="relative flex items-center px-4 sm:px-5 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-black/[0.08] bg-[#f8faf9] focus-within:border-emerald-500 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
                         <svg className="h-4 w-4 text-black/40 shrink-0 mr-3 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10" />
                           <path d="M12 6v12M17 10h-7a2.5 2.5 0 0 0 0 5h7" />
@@ -527,7 +527,7 @@ export function Contact() {
                     <div>
                       <div
                         className={cn(
-                          "relative rounded-2xl border bg-[#f8faf9] px-4 sm:px-5 py-4 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all",
+                          "relative rounded-2xl border bg-[#f8faf9] px-4 sm:px-5 py-3 sm:py-4 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all",
                           errors.message && touched.message
                             ? "border-red-500 bg-red-50/[0.15]"
                             : "border-black/[0.08] focus-within:border-emerald-500"
@@ -539,13 +539,13 @@ export function Contact() {
                           </svg>
                           <textarea
                             required
-                            rows={5}
+                            rows={3}
                             maxLength={500}
                             placeholder="Tell me about your project *"
                             value={values.message}
                             onChange={update("message")}
                             onBlur={blur("message")}
-                            className="w-full resize-none bg-transparent text-sm sm:text-[15px] text-[#0a0d0c] placeholder:text-black/40 focus:outline-none min-h-[130px] sm:min-h-[150px] leading-relaxed"
+                            className="w-full resize-none bg-transparent text-sm sm:text-[15px] text-[#0a0d0c] placeholder:text-black/40 focus:outline-none min-h-[80px] sm:min-h-[150px] leading-relaxed"
                           />
                         </div>
                         <div className="flex justify-end pt-1">
@@ -564,7 +564,7 @@ export function Contact() {
                     )}
 
                     {/* Submit Area: Button + Privacy Note */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pt-4 sm:pt-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 sm:pt-6">
                       <button
                         type="submit"
                         disabled={status === "submitting"}

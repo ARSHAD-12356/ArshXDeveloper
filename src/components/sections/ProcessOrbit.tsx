@@ -37,7 +37,7 @@ export function ProcessOrbit({ progress }: ProcessOrbitProps) {
       <motion.svg
         viewBox="0 0 200 200"
         style={{ rotate }}
-        className="absolute left-1/2 top-[74svh] h-[min(144svh,125vw)] w-[min(144svh,125vw)] -translate-x-1/2 -translate-y-1/2 overflow-visible will-change-transform md:top-[88svh] md:h-[min(144svh,92vw)] md:w-[min(144svh,92vw)]"
+        className="absolute left-1/2 top-[60svh] h-[92vw] w-[92vw] sm:top-[74svh] sm:h-[min(144svh,125vw)] sm:w-[min(144svh,125vw)] -translate-x-1/2 -translate-y-1/2 overflow-visible will-change-transform md:top-[88svh] md:h-[min(144svh,92vw)] md:w-[min(144svh,92vw)]"
       >
         <defs>
           {/* Starts at the left point and runs clockwise over the top, so text on the upper arc reads upright. */}

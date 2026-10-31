@@ -78,10 +78,12 @@ export function Footer() {
             </div>
           </motion.div>
 
+          {/* Wordmark sits directly on top of the bottom bar, so a wrapped (taller) bar on phones never hides it */}
+          <div className="absolute inset-x-0 bottom-0 flex flex-col">
           {/* Giant wordmark: SVG text stretched to an exact width so it always spans the screen */}
           <motion.div
             style={{ scale: markScale, y: markY }}
-            className="absolute inset-x-0 bottom-[calc(4.75rem+2svh)] flex origin-bottom justify-center will-change-transform sm:bottom-[calc(3.5rem+3svh)]"
+            className="flex origin-bottom justify-center pb-[2svh] will-change-transform sm:pb-[3svh]"
           >
             <svg viewBox="0 0 1000 205" role="img" aria-label={`${profile.name}`} className="w-[min(94vw,195svh)] overflow-visible">
               <text
@@ -105,7 +107,7 @@ export function Footer() {
           {/* Bottom bar */}
           <motion.div
             style={{ opacity: infoOpacity }}
-            className="container-x absolute inset-x-0 bottom-0 flex flex-col gap-3 border-t border-white/10 py-5 text-[11px] uppercase tracking-[0.12em] text-white/50 sm:flex-row sm:items-center sm:justify-between"
+            className="container-x relative flex flex-col gap-3 border-t border-white/10 py-5 text-[11px] uppercase tracking-[0.12em] text-white/50 sm:flex-row sm:items-center sm:justify-between"
           >
             <p>
               &copy; {year} {profile.name}. All rights reserved.
@@ -122,6 +124,7 @@ export function Footer() {
               </a>
             </nav>
           </motion.div>
+          </div>
         </div>
       </div>
     </footer>

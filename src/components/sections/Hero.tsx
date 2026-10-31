@@ -46,7 +46,7 @@ export function Hero({ coverProgress }: HeroProps) {
           {profile.tagline}
         </motion.p>
 
-        <h1 className="font-display text-hero my-auto origin-left font-bold uppercase transform scale-x-[1.08] sm:scale-x-[1.16]">
+        <h1 className="font-display text-hero max-sm:text-[14.4vw] max-sm:leading-[1.04] my-auto origin-left font-bold uppercase transform scale-x-[1.08] sm:scale-x-[1.16]">
           <span className="sr-only">
             {profile.headline.join(" ")} - {profile.name}, {profile.role}
           </span>

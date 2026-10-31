@@ -74,7 +74,7 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
         ref={cardRef}
         aria-labelledby={`${project.id}-title`}
         style={{ scale, top: `${index * 26}px`, ["--glow" as string]: project.accent }}
-        className="glow-card relative flex h-[min(80svh,860px)] will-change-transform w-full max-w-[1240px] origin-top flex-col overflow-hidden rounded-[22px] bg-ink-2 shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.9)] md:h-[min(78svh,820px)] md:flex-row md:rounded-[32px]"
+        className="glow-card relative flex h-auto will-change-transform w-full max-w-[1240px] origin-top flex-col overflow-hidden rounded-[22px] bg-ink-2 shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.9)] md:h-[min(78svh,820px)] md:flex-row md:rounded-[32px]"
       >
         {/* Continuously rotating gradient border */}
         <span aria-hidden className="gradient-ring z-[25]">
@@ -87,7 +87,7 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Open ${project.title}`}
-          className="group relative order-1 flex h-[42%] shrink-0 items-center justify-center p-4 sm:p-6 md:order-2 md:h-auto md:flex-[1.45] md:p-8 md:pl-2 overflow-hidden"
+          className="group relative order-1 flex shrink-0 items-center justify-center p-3 sm:p-6 md:order-2 md:flex-[1.45] md:p-8 md:pl-2 overflow-hidden"
         >
           <div
             style={{
@@ -110,11 +110,11 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
         </a>
 
         {/* Info */}
-        <div className="relative z-10 order-2 flex flex-1 flex-col p-5 sm:p-8 md:order-1 md:max-w-[520px] md:p-12 short:md:p-8">
+        <div className="relative z-10 order-2 flex flex-1 flex-col px-4 pb-4 pt-1 sm:p-8 md:order-1 md:max-w-[520px] md:p-12 short:md:p-8">
           <div className="flex items-center justify-between gap-4">
             <span
               aria-label={`Project ${index + 1} of ${total}`}
-              className="font-display text-[clamp(3rem,min(6.5vw,11svh),6rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-fg"
+              className="font-display text-[clamp(2.5rem,min(6.5vw,11svh),6rem)] font-extrabold leading-[0.85] tracking-[-0.04em] text-fg"
             >
               {num}
             </span>
@@ -139,12 +139,12 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
             )}
           </div>
 
-          <p className="mt-4 text-label text-muted md:mt-8 short:md:mt-4">{project.category}</p>
-          <h3 id={`${project.id}-title`} className="mt-2 font-display text-[clamp(2rem,4.5vw,4.25rem)] font-semibold leading-[0.95] tracking-tight short:text-[clamp(1.75rem,3.2vw,2.75rem)]">
+          <p className="mt-4 hidden text-label text-muted sm:block md:mt-8 short:md:mt-4">{project.category}</p>
+          <h3 id={`${project.id}-title`} className="mt-3 font-display text-[clamp(1.85rem,4.5vw,4.25rem)] sm:mt-2 font-semibold leading-[0.95] tracking-tight short:text-[clamp(1.75rem,3.2vw,2.75rem)]">
             {project.title}
           </h3>
 
-          <div className="mt-4 space-y-3 text-sm leading-relaxed md:mt-8 md:text-[0.95rem] short:md:mt-4 short:md:text-sm">
+          <div className="mt-4 hidden space-y-3 text-sm leading-relaxed sm:block md:mt-8 md:text-[0.95rem] short:md:mt-4 short:md:text-sm">
             {project.description ? (
               <p className="line-clamp-4 text-muted sm:line-clamp-none short:line-clamp-3">
                 {project.description}
@@ -167,7 +167,7 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
             )}
           </div>
 
-          <ul aria-label="Tech stack" className="mt-4 flex flex-wrap gap-1.5 md:mt-6 md:gap-2 short:md:mt-4">
+          <ul aria-label="Tech stack" className="mt-3 flex flex-wrap gap-1.5 sm:mt-4 md:mt-6 md:gap-2 short:md:mt-4">
             {project.stack.map((t) => (
               <li key={t} className="inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[11px] text-fg/80 md:px-3 md:text-xs">
                 <TechBadgeIcon name={t} />
@@ -176,7 +176,7 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
             ))}
           </ul>
 
-          <div className="mt-auto flex flex-wrap items-center gap-3 pt-5">
+          <div className="mt-auto flex flex-wrap items-center gap-3 pt-4 sm:pt-5">
             <LiveProductMenu links={project.links} accent={project.accent} placement="top" />
             {primary && (
               <a
