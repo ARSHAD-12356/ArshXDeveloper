@@ -90,8 +90,7 @@ export function Contact() {
   const contactCards = [
     {
       label: "EMAIL",
-      value: profile.email || "hello@mahesh.dev",
-      href: `mailto:${profile.email || "hello@mahesh.dev"}`,
+      links: [{ text: profile.email, href: `mailto:${profile.email}` }],
       icon: (
         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect width="20" height="16" x="2" y="4" rx="2" />
@@ -101,8 +100,7 @@ export function Contact() {
     },
     {
       label: "PHONE",
-      value: profile.phone || "+91 9204644875",
-      href: `tel:${(profile.phone || "+919204644875").replace(/\s+/g, "")}`,
+      links: profile.phones.map((p) => ({ text: p, href: `tel:${p.replace(/\s+/g, "")}` })),
       icon: (
         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -111,8 +109,12 @@ export function Contact() {
     },
     {
       label: "LOCATION",
-      value: profile.location || "Patna, Bihar, India",
-      href: `https://maps.google.com/?q=${encodeURIComponent(profile.location || "Patna, Bihar, India")}`,
+      links: [
+        {
+          text: profile.location,
+          href: `https://maps.google.com/?q=${encodeURIComponent(profile.location)}`,
+        },
+      ],
       icon: (
         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
@@ -122,8 +124,7 @@ export function Contact() {
     },
     {
       label: "WORK",
-      value: profile.work || "Open to Remote / On-site",
-      href: "#contact",
+      links: [{ text: profile.work, href: "#contact" }],
       icon: (
         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect width="20" height="14" x="2" y="7" rx="2" />
@@ -199,32 +200,61 @@ export function Contact() {
 
             {/* 4 Contact Information Cards (2x2 Grid) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 sm:mb-12">
-              {contactCards.map((card) => (
-                <a
-                  key={card.label}
-                  href={card.href}
-                  target={card.href.startsWith("http") ? "_blank" : undefined}
-                  rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="group flex items-center justify-between p-4 sm:p-5 rounded-[22px] border border-black/[0.07] bg-white/90 backdrop-blur shadow-[0_1px_2px_rgba(0,0,0,0.03),0_8px_24px_-12px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 hover:border-emerald-500/40 hover:shadow-[0_14px_34px_-14px_rgba(16,185,129,0.35)] transition-all duration-300"
-                >
-                  <div className="flex items-center gap-4 min-w-0 pr-2">
-                    <span className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#eafaf1] to-[#d5f5e6] text-[#059669] ring-1 ring-emerald-500/10 transition-transform duration-300 group-hover:scale-105">
-                      {card.icon}
-                    </span>
-                    <div className="flex flex-col min-w-0">
-                      <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em] text-black/45 leading-none mb-2">
-                        {card.label}
+              {contactCards.map((card) => {
+                // One link: the whole card is clickable. Several (phones): each line is its own link.
+                const multi = card.links.length > 1;
+                const single = card.links[0];
+                const external = !multi && single.href.startsWith("http");
+                const className =
+                  "group flex items-center justify-between p-4 sm:p-5 rounded-[22px] border border-black/[0.07] bg-white/90 backdrop-blur shadow-[0_1px_2px_rgba(0,0,0,0.03),0_8px_24px_-12px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 hover:border-emerald-500/40 hover:shadow-[0_14px_34px_-14px_rgba(16,185,129,0.35)] transition-all duration-300";
+                const body = (
+                  <>
+                    <div className="flex items-center gap-4 min-w-0 pr-2">
+                      <span className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#eafaf1] to-[#d5f5e6] text-[#059669] ring-1 ring-emerald-500/10 transition-transform duration-300 group-hover:scale-105">
+                        {card.icon}
                       </span>
-                      <span className="text-sm sm:text-[15px] font-bold text-[#0a0d0c] leading-snug break-words">
-                        {card.value}
-                      </span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.18em] text-black/45 leading-none mb-2">
+                          {card.label}
+                        </span>
+                        {multi ? (
+                          card.links.map((link) => (
+                            <a
+                              key={link.href}
+                              href={link.href}
+                              className="text-sm sm:text-[15px] font-bold text-[#0a0d0c] leading-snug break-words hover:text-emerald-600 transition-colors"
+                            >
+                              {link.text}
+                            </a>
+                          ))
+                        ) : (
+                          <span className="text-sm sm:text-[15px] font-bold text-[#0a0d0c] leading-snug break-words">
+                            {single.text}
+                          </span>
+                        )}
+                      </div>
                     </div>
+                    <span className="text-black/30 group-hover:text-emerald-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-sm shrink-0">
+                      ↗
+                    </span>
+                  </>
+                );
+                return multi ? (
+                  <div key={card.label} className={className}>
+                    {body}
                   </div>
-                  <span className="text-black/30 group-hover:text-emerald-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-sm shrink-0">
-                    ↗
-                  </span>
-                </a>
-              ))}
+                ) : (
+                  <a
+                    key={card.label}
+                    href={single.href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                    className={className}
+                  >
+                    {body}
+                  </a>
+                );
+              })}
             </div>
 
             {/* Social Links Row */}
@@ -291,7 +321,7 @@ export function Contact() {
 
                 {/* Email */}
                 <a
-                  href={`mailto:${profile.email || "hello@mahesh.dev"}`}
+                  href={`mailto:${profile.email}`}
                   aria-label="Email Me"
                   className="flex h-12 w-12 sm:h-[52px] sm:w-[52px] items-center justify-center rounded-2xl border border-black/[0.07] bg-white shadow-[0_6px_18px_-10px_rgba(0,0,0,0.15)] hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_12px_26px_-12px_rgba(16,185,129,0.4)] transition-all duration-300"
                 >
