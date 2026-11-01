@@ -30,6 +30,20 @@ export const ChevronDown = ({ size, ...p }: IconProps) => (
 export const Check = ({ size, ...p }: IconProps) => (
   <svg {...base(size)} {...p}><path d="M20 6 9 17l-5-5" /></svg>
 );
+export const CodeIcon = ({ size, ...p }: IconProps) => (
+  <svg {...base(size)} {...p}><path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14" /></svg>
+);
+export const LayersIcon = ({ size, ...p }: IconProps) => (
+  <svg {...base(size)} {...p}><path d="m12 3 9 5-9 5-9-5 9-5Z" /><path d="m3 12 9 5 9-5M3 16l9 5 9-5" /></svg>
+);
+export const RocketIcon = ({ size, ...p }: IconProps) => (
+  <svg {...base(size)} {...p}>
+    <path d="M14 4c3-1.5 6-1 6-1s.5 3-1 6l-6 6-5-5 6-6Z" />
+    <path d="m9 10-4 .5L3 13l4 1M14 15l-.5 4L11 21l-1-4" />
+    <circle cx="15.5" cy="8.5" r="1.3" />
+    <path d="M6 18c-1 1-1.5 3-1.5 3s2-.5 3-1.5" />
+  </svg>
+);
 export const Quote = ({ size = 40, ...p }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden {...p}>
     <path d="M9.6 5C5.9 6.4 3.5 9.4 3.5 13.6V19h6.6v-6.5H6.8c.1-2.6 1.6-4.6 4-5.7L9.6 5Zm10.4 0c-3.7 1.4-6.1 4.4-6.1 8.6V19h6.6v-6.5h-3.3c.1-2.6 1.6-4.6 4-5.7L20 5Z" />

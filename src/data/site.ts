@@ -49,6 +49,29 @@ export const profile = {
   ],
 } as const;
 
+/** Full-screen brand card shown right after the loader. */
+export const brand = {
+  name: "ARSHXCODER",
+  accentIndex: 4,
+  subtitle: "FULL STACK DEVELOPER",
+  portrait: "/images/portrait-hd.webp",
+} as const;
+
+/** Light introduction panel shown above the hero. */
+export const introduction = {
+  fullName: "Md Arshad Raza",
+  role: "Full Stack Developer",
+  // Non-breaking space keeps "&" from wrapping onto its own line on phones.
+  heading: ["I Build Scalable Web Applications &", "Deliver Real-World"],
+  highlight: "Digital Solutions.",
+  description:
+    "A developer who loves building end-to-end web solutions, solving real-world problems, and creating impactful digital experiences.",
+  features: ["Web Development", "Backend Development", "Problem Solving"],
+  photo: "/images/arshad_new.png",
+  // Drop the PDF into /public/resume/ with this exact name.
+  resume: "/resume/Md-Arshad-Raza-Resume.pdf",
+} as const;
+
 export const navLinks: NavLink[] = [
   { label: "About", href: "#about" },
   { label: "Work", href: "#work" },

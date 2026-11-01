@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Bebas_Neue, Inter, Inter_Tight, JetBrains_Mono, Montserrat } from "next/font/google";
 import { profile } from "@/data/site";
+import { PreloaderProvider } from "@/components/providers/Preloader";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Cursor } from "@/components/ui/Cursor";
 import { CursorSplash } from "@/components/ui/CursorSplash";
@@ -9,6 +10,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight", weight: ["400", "500", "600", "700", "800"], display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono-family", display: "swap" });
+const bebas = Bebas_Neue({ subsets: ["latin"], variable: "--font-bebas", weight: "400", display: "swap" });
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat", weight: ["600", "700"], display: "swap" });
 
 const title = `${profile.name} - ${profile.role} & ${profile.tagline}`;
 
@@ -44,7 +47,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${interTight.variable} ${mono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${interTight.variable} ${mono.variable} ${montserrat.variable} ${bebas.variable}`}>
       <body className="grain">
         <a
           href="#main"
@@ -53,9 +56,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <SmoothScroll>
-          <CursorSplash />
-          {children}
-          <Cursor />
+          <PreloaderProvider>
+            <CursorSplash />
+            {children}
+            <Cursor />
+          </PreloaderProvider>
         </SmoothScroll>
       </body>
     </html>

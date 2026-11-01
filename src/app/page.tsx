@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { BrandIntroduction } from "@/components/sections/BrandIntroduction";
 import { HeroAbout } from "@/components/sections/HeroAbout";
 import { Experience } from "@/components/sections/Experience";
 import { Works } from "@/components/sections/Works";
@@ -12,6 +13,7 @@ export default function Home() {
     <>
       <Header />
       <main id="main" className="relative z-10">
+        <BrandIntroduction />
         <HeroAbout />
         <Experience />
         <Works />

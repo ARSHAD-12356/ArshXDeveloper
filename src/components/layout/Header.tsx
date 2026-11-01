@@ -1,18 +1,28 @@
 "use client";
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { profile } from "@/data/site";
 import { cn, EASE_OUT_EXPO } from "@/lib/utils";
+import { useSiteReady } from "@/components/providers/Preloader";
 import { AvailabilityBadge } from "@/components/ui/AvailabilityBadge";
 import { MenuDrawer } from "./MenuDrawer";
 
+/** Scroll position where the pinned brand card has been fully covered by the next section. */
+const brandCardEnd = () => {
+  const pin = document.querySelector<HTMLElement>("[data-header-hide]");
+  return pin ? pin.offsetHeight - window.innerHeight : 0;
+};
+
 export function Header() {
+  const ready = useSiteReady();
   const [open, setOpen] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [light, setLight] = useState(false);
+  const [intro, setIntro] = useState(false);
+  const [onBrand, setOnBrand] = useState(true);
   const [label, setLabel] = useState("");
   const { scrollY } = useScroll();
 
@@ -20,11 +30,7 @@ export function Header() {
 
   // Glass background once scrolled; tuck away while scrolling down, return on scroll up.
   // Also flips to dark-on-light while a light section sits under the header bar.
-  useMotionValueEvent(scrollY, "change", (y) => {
-    const prev = scrollY.getPrevious() ?? 0;
-    setScrolled(y > 40);
-    setHidden(y > prev && y > 400);
-
+  const syncTheme = () => {
     const probe = 44;
     const under = (el: HTMLElement) => {
       const r = el.getBoundingClientRect();
@@ -47,7 +53,35 @@ export function Header() {
     });
     setLight(onLight);
     setLabel(nextLabel);
+    // The light introduction panel keeps the badge and uses an outlined menu button.
+    let onIntro = false;
+    document.querySelectorAll<HTMLElement>("[data-header-theme=intro]").forEach((el) => {
+      if (under(el)) onIntro = true;
+    });
+    setIntro(onIntro);
+    // The full-screen brand card shows no header until the next panel has reached the top.
+    const brandCard = document.querySelector<HTMLElement>("[data-header-hide]");
+    setOnBrand(!!brandCard && under(brandCard) && !onIntro);
+  };
+
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const prev = scrollY.getPrevious() ?? 0;
+    // Measured from the end of the brand card, which takes up the first screen of scrolling.
+    const start = brandCardEnd();
+    setScrolled(y > start + 40);
+    setHidden(y > prev && y > start + 400);
+    // Next frame, so sections moved by scroll-linked transforms are read in their new position.
+    requestAnimationFrame(syncTheme);
   });
+
+  // Scroll events don't fire on first paint, so resolve the theme for the initial position too.
+  useEffect(() => {
+    const start = brandCardEnd();
+    setScrolled(window.scrollY > start + 40);
+    syncTheme();
+    // Re-checked at reveal, when the page's layout has certainly settled.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
 
   const handleToggle = () => {
     if (open) {
@@ -72,7 +106,7 @@ export function Header() {
     <>
       <motion.header
         initial={{ y: -100, opacity: 0 }}
-        animate={{ y: hidden && !isMenuVisible ? "-110%" : 0, opacity: 1 }}
+        animate={!ready || (onBrand && !isMenuVisible) ? { y: -100, opacity: 0 } : { y: hidden && !isMenuVisible ? "-110%" : 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
         className="fixed inset-x-0 top-0 z-[110]"
       >
@@ -81,7 +115,9 @@ export function Header() {
             "border-b transition-[background-color,border-color] duration-500",
             isMenuVisible
               ? "border-transparent bg-transparent"
-              : light
+              : intro
+                ? cn("text-ink", scrolled ? "border-black/5 bg-white/75 backdrop-blur-[6px]" : "border-transparent bg-transparent")
+                : light
                 ? "border-transparent bg-transparent text-ink"
                 : scrolled
                   ? "border-line bg-ink/80 backdrop-blur-[6px]"
@@ -118,13 +154,13 @@ export function Header() {
             </div>
 
             <AnimatePresence>
-              {profile.available && !light && !isMenuVisible && (
+              {profile.available && (!light || intro) && !isMenuVisible && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="absolute left-1/2 hidden -translate-x-1/2 sm:flex"
+                  className={cn("absolute left-1/2 hidden -translate-x-1/2 sm:flex", intro && "theme-light")}
                 >
                   <AvailabilityBadge />
                 </motion.div>
@@ -132,7 +168,7 @@ export function Header() {
             </AnimatePresence>
 
             {/* Seamless Hamburger <-> Close (X) button with smooth morph animation */}
-            <MenuButton open={open} light={light} onClick={handleToggle} />
+            <MenuButton open={open} light={light} intro={intro} onClick={handleToggle} />
           </div>
         </div>
       </motion.header>
@@ -146,7 +182,8 @@ export function Header() {
  * Animated circular button that smoothly transforms between 3-line Hamburger and Close (X).
  * Preserves button position, circular border, and centers the lines with cubic-bezier easing.
  */
-function MenuButton({ open, light, onClick }: { open: boolean; light: boolean; onClick: () => void }) {
+function MenuButton({ open, light, intro, onClick }: { open: boolean; light: boolean; intro: boolean; onClick: () => void }) {
+  const bar = intro && !open ? "bg-ink" : "bg-white";
   return (
     <button
       type="button"
@@ -158,7 +195,9 @@ function MenuButton({ open, light, onClick }: { open: boolean; light: boolean; o
         "group relative flex h-12 w-12 sm:h-13 sm:w-13 md:h-14 md:w-14 shrink-0 items-center justify-center rounded-full border transition-all duration-400 ease-[cubic-bezier(0.25,1,0.35,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
         open
           ? "border-white/20 bg-transparent hover:border-white/60 hover:bg-white/[0.06]"
-          : light
+          : intro
+            ? "border-black/15 bg-white/70 backdrop-blur-md hover:border-black/40 hover:bg-white"
+            : light
             ? "border-ink bg-ink hover:bg-ink/85"
             : "border-line-strong bg-ink/40 backdrop-blur-md hover:border-white/60 hover:bg-white/[0.06]",
       )}
@@ -167,21 +206,24 @@ function MenuButton({ open, light, onClick }: { open: boolean; light: boolean; o
         {/* Top bar: translates to center and rotates 45deg */}
         <span
           className={cn(
-            "absolute h-[1.8px] w-5 rounded-full bg-white transition-all duration-400 ease-[cubic-bezier(0.25,1,0.35,1)] origin-center",
+            "absolute h-[1.8px] w-5 rounded-full transition-all duration-400 ease-[cubic-bezier(0.25,1,0.35,1)] origin-center",
+            bar,
             open ? "translate-y-0 rotate-45" : "-translate-y-[6px] rotate-0"
           )}
         />
         {/* Middle bar: collapses width and fades out */}
         <span
           className={cn(
-            "absolute h-[1.8px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.25,1,0.35,1)] origin-center",
+            "absolute h-[1.8px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.25,1,0.35,1)] origin-center",
+            bar,
             open ? "w-0 opacity-0" : "w-5 opacity-100 group-hover:w-3.5 ml-auto"
           )}
         />
         {/* Bottom bar: translates to center and rotates -45deg */}
         <span
           className={cn(
-            "absolute h-[1.8px] w-5 rounded-full bg-white transition-all duration-400 ease-[cubic-bezier(0.25,1,0.35,1)] origin-center",
+            "absolute h-[1.8px] w-5 rounded-full transition-all duration-400 ease-[cubic-bezier(0.25,1,0.35,1)] origin-center",
+            bar,
             open ? "translate-y-0 -rotate-45" : "translate-y-[6px] rotate-0"
           )}
         />
