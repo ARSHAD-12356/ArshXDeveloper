@@ -91,8 +91,6 @@ export function BrandReveal({ reveal, coverProgress }: BrandRevealProps) {
 
   const figureY = useTransform(r, [0.06, 1], ["88svh", "0svh"]);
   const figureOpacity = useTransform(r, [0.06, 0.26], [0, 1]);
-  const haloScale = useTransform(r, [0.3, 1], [0.74, 1]);
-  const haloOpacity = useTransform(r, [0.3, 0.95], [0, 1]);
 
   // The whole composition recedes while it's being covered by the next section.
   const stageY = useTransform(cover, [0, 1], ["0svh", "-14svh"]);
@@ -117,29 +115,8 @@ export function BrandReveal({ reveal, coverProgress }: BrandRevealProps) {
         />
 
         <motion.div style={{ y: stageY, scale: stageScale, opacity: stageOpacity }} className="brand-stage">
-          {/* ---------- Portrait and halo ---------- */}
+          {/* ---------- Portrait ---------- */}
           <motion.div style={{ y: figureY, opacity: figureOpacity }} className="brand-figure">
-            <motion.div aria-hidden style={{ scale: haloScale, opacity: haloOpacity }} className="brand-halo">
-              <span className="brand-halo-glow" />
-              <svg viewBox="0 0 620 620" className="brand-halo-ring" fill="none">
-                <defs>
-                  <linearGradient id="brand-ring-fade" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#11d04c" />
-                    <stop offset="34%" stopColor="#11d04c" />
-                    <stop offset="50%" stopColor="#4fe082" />
-                    <stop offset="60%" stopColor="#4fe082" stopOpacity="0" />
-                  </linearGradient>
-                  <radialGradient id="brand-ring-glint">
-                    <stop offset="0%" stopColor="#fff" />
-                    <stop offset="35%" stopColor="#fff" stopOpacity=".85" />
-                    <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-                <circle cx="310" cy="310" r="307" stroke="url(#brand-ring-fade)" strokeWidth="4.5" />
-                <ellipse cx="74" cy="110" rx="24" ry="5" fill="url(#brand-ring-glint)" transform="rotate(-48 74 110)" />
-                <ellipse cx="546" cy="110" rx="24" ry="5" fill="url(#brand-ring-glint)" transform="rotate(48 546 110)" />
-              </svg>
-            </motion.div>
             <Image
               src={brand.portrait}
               alt="Md Arshad Raza"

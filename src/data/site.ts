@@ -61,13 +61,24 @@ export const brand = {
 export const introduction = {
   fullName: "Md Arshad Raza",
   role: "Full Stack Developer",
+  /** Typed one after another after "I Am", starting with the main role. */
+  roles: [
+    "Full Stack Developer",
+    "Frontend Engineer",
+    "Backend Engineer",
+    "Web Developer",
+    "UI/UX Developer",
+    "Java Developer",
+    "Python Developer",
+    "Programmer",
+  ],
   // Non-breaking space keeps "&" from wrapping onto its own line on phones.
   heading: ["I Build Scalable Web Applications &", "Deliver Real-World"],
   highlight: "Digital Solutions.",
   description:
-    "A developer who loves building end-to-end web solutions, solving real-world problems, and creating impactful digital experiences.",
+    "A passionate developer who loves turning ideas into clean, scalable and impactful web applications.",
   features: ["Web Development", "Backend Development", "Problem Solving"],
-  photo: "/images/arshad_new.png",
+  photo: "/images/hero-portrait.png",
   // Drop the PDF into /public/resume/ with this exact name.
   resume: "/resume/Md-Arshad-Raza-Resume.pdf",
 } as const;

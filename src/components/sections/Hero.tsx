@@ -1,8 +1,10 @@
 "use client";
 
-import { motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useMotionValue, useTransform, type MotionValue } from "framer-motion";
 import { profile, socials } from "@/data/site";
 import { EASE_OUT_EXPO } from "@/lib/utils";
+import { useSiteReady } from "@/components/providers/Preloader";
 import { ArrowUpRight } from "@/components/ui/Icons";
 
 interface HeroProps {
@@ -19,8 +21,15 @@ export function Hero({ coverProgress }: HeroProps) {
   const opacity = useTransform(progress, [0, 0.9], [1, 0.25]);
   const shade = useTransform(progress, [0, 1], [0, 0.7]);
 
+  // Sections above now cover the hero at first, so its entrance waits until it's actually seen.
+  const ready = useSiteReady();
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { once: true, amount: 0.4 });
+  const play = ready && inView;
+
   return (
     <section
+      ref={sectionRef}
       id="top"
       aria-label="Introduction"
       className="sticky top-0 isolate flex h-[100svh] min-h-[540px] flex-col overflow-hidden pb-6 pt-[calc(var(--header-h)+1rem)] md:pb-10 md:pt-[calc(var(--header-h)+1.75rem)]"
@@ -36,7 +45,7 @@ export function Hero({ coverProgress }: HeroProps) {
       <motion.div style={{ y, opacity, scale }} className="container-x relative flex h-full flex-col justify-between origin-bottom-left will-change-[transform,opacity]">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={play ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 1, ease: EASE_OUT_EXPO, delay: 0.2 }}
           className="flex flex-wrap items-center gap-3 text-label text-muted"
         >
@@ -55,7 +64,7 @@ export function Hero({ coverProgress }: HeroProps) {
               <motion.span
                 className="block"
                 initial={{ y: "105%" }}
-                animate={{ y: "0%" }}
+                animate={play ? { y: "0%" } : undefined}
                 transition={{ duration: 1.3, ease: EASE_OUT_EXPO, delay: 0.25 + i * 0.12 }}
               >
                 {line.split("").map((char, j) =>
@@ -78,7 +87,7 @@ export function Hero({ coverProgress }: HeroProps) {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={play ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 1, ease: EASE_OUT_EXPO, delay: 0.7 }}
             className="max-w-md text-sm font-semibold uppercase leading-relaxed tracking-wide text-fg/90 md:text-[0.95rem]"
           >
@@ -87,7 +96,7 @@ export function Hero({ coverProgress }: HeroProps) {
 
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={play ? { opacity: 1, scale: 1 } : undefined}
             transition={{ duration: 1.2, ease: EASE_OUT_EXPO, delay: 0.9 }}
             className="flex items-center gap-6 self-end md:self-auto"
           >
@@ -107,7 +116,7 @@ export function Hero({ coverProgress }: HeroProps) {
       <motion.nav
         aria-label="Social"
         initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
+        animate={play ? { opacity: 1, x: 0 } : undefined}
         transition={{ duration: 1, ease: EASE_OUT_EXPO, delay: 1 }}
         className="absolute right-[clamp(1rem,2.5vw,2.5rem)] top-1/2 hidden -translate-y-1/2 flex-col items-center gap-6 lg:flex"
       >
@@ -131,7 +140,7 @@ export function Hero({ coverProgress }: HeroProps) {
       <motion.div
         aria-hidden
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={play ? { opacity: 1 } : undefined}
         transition={{ delay: 1.4 }}
         className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-dim md:flex"
       >

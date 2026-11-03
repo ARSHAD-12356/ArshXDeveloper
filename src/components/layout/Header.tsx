@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
-import { profile } from "@/data/site";
+import { brand, profile } from "@/data/site";
 import { cn, EASE_OUT_EXPO } from "@/lib/utils";
 import { useSiteReady } from "@/components/providers/Preloader";
 import { AvailabilityBadge } from "@/components/ui/AvailabilityBadge";
@@ -130,10 +130,12 @@ export function Header() {
               <a
                 href="#top"
                 aria-label={`${profile.name} - back to top`}
-                className="font-display text-2xl font-extrabold uppercase tracking-tight md:text-[1.75rem]"
+                className="font-display text-[1.15rem] font-extrabold uppercase tracking-tight sm:text-2xl md:text-[1.75rem]"
               >
                 <span className="block leading-none">
-                  {profile.name}
+                  {brand.name.slice(0, brand.accentIndex)}
+                  <span className="text-[#00d879]">{brand.name[brand.accentIndex]}</span>
+                  {brand.name.slice(brand.accentIndex + 1)}
                   <sup className="ml-0.5 text-[0.45em] font-semibold">&reg;</sup>
                 </span>
                 <AnimatePresence>
@@ -160,9 +162,14 @@ export function Header() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
-                  className={cn("absolute left-1/2 hidden -translate-x-1/2 sm:flex", intro && "theme-light")}
+                  className={
+                    intro
+                      ? // Phones have no room to center it, so here it sits between the logo and the menu.
+                        "theme-light flex max-[359px]:hidden sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+                      : "absolute left-1/2 hidden -translate-x-1/2 sm:flex"
+                  }
                 >
-                  <AvailabilityBadge />
+                  <AvailabilityBadge light={intro} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -196,7 +203,7 @@ function MenuButton({ open, light, intro, onClick }: { open: boolean; light: boo
         open
           ? "border-white/20 bg-transparent hover:border-white/60 hover:bg-white/[0.06]"
           : intro
-            ? "border-black/15 bg-white/70 backdrop-blur-md hover:border-black/40 hover:bg-white"
+            ? "border-black/10 bg-white shadow-[0_6px_18px_-12px_rgba(0,0,0,0.3)] hover:border-black/40"
             : light
             ? "border-ink bg-ink hover:bg-ink/85"
             : "border-line-strong bg-ink/40 backdrop-blur-md hover:border-white/60 hover:bg-white/[0.06]",
