@@ -1,8 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSmoothScroll } from "@/components/providers/SmoothScroll";
+import { clearProjectReturn } from "@/lib/projectReturn";
 
 interface MenuDrawerProps {
   open: boolean;
@@ -56,10 +58,21 @@ export function MenuDrawer({ open, onClose, onExitComplete }: MenuDrawerProps) {
     };
   }, [open, onClose, stop]);
 
+  const pathname = usePathname();
+  const router = useRouter();
+
   const handleNav = (href: string, label: string) => {
     setActiveItem(label);
     onClose();
     window.setTimeout(() => {
+      if (pathname !== "/") {
+        // This header unmounts with the page, so the exit animation's unlock may never run.
+        document.body.style.overflow = "";
+        start();
+        clearProjectReturn();
+        router.push(href === "#top" ? "/" : `/${href}`, { scroll: href === "#top" });
+        return;
+      }
       scrollTo(href === "#top" ? 0 : href);
       history.replaceState(null, "", href);
     }, 350);
@@ -148,7 +161,7 @@ export function MenuDrawer({ open, onClose, onExitComplete }: MenuDrawerProps) {
 
                 {/* GitHub */}
                 <a
-                  href="https://github.com/"
+                  href="https://github.com/ARSHAD-12356"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-1.5 text-white/80 transition-colors hover:text-white"
@@ -163,7 +176,7 @@ export function MenuDrawer({ open, onClose, onExitComplete }: MenuDrawerProps) {
 
                 {/* LinkedIn */}
                 <a
-                  href="https://www.linkedin.com/"
+                  href="https://www.linkedin.com/in/md-arshad-raza-b5097722a/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-1.5 text-white/80 transition-colors hover:text-white"
@@ -180,7 +193,7 @@ export function MenuDrawer({ open, onClose, onExitComplete }: MenuDrawerProps) {
 
                 {/* Instagram */}
                 <a
-                  href="https://www.instagram.com/"
+                  href="https://www.instagram.com/firarsh1551?vrfl=Nmh1eDFyczN2cXUz"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-1.5 text-white/80 transition-colors hover:text-white"

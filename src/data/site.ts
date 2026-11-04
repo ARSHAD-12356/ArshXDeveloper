@@ -27,25 +27,46 @@ export const profile = {
   available: true,
   url: "https://mahesh.dev",
   stats: [
-    { value: "25+", label: "Development Projects" },
-    { value: "3+", label: "Data Analysis" },
-    { value: "15+", label: "Tech Stack" },
+    { value: 25, suffix: "+", label: "Development Projects" },
+    { value: 5, suffix: "+", label: "Data Analysis" },
+    { value: 15, suffix: "+", label: "Tech Stack" },
   ],
+  /** Development first, then data analysis. A name with no logo in `TechIcon` shows as text. */
   stack: [
+    "HTML",
+    "CSS",
+    "JavaScript",
     "TypeScript",
     "React",
     "Next.js",
+    "Tailwind CSS",
     "Node.js",
     "Express",
+    "Java",
+    "C",
+    "Dart",
+    "Flutter",
     "PostgreSQL",
     "MongoDB",
     "Prisma",
-    "Tailwind CSS",
-    "Flutter",
+    "Redis",
+    "Firebase",
     "Docker",
     "AWS",
+    "Azure",
+    "Vercel",
+    "Git",
+    "GitHub",
+    "Postman",
+    "Figma",
     "Python",
-    "Redis",
+    "NumPy",
+    "Pandas",
+    "SQL",
+    "Excel",
+    "Power BI",
+    "Tableau",
+    "Statistics",
   ],
 } as const;
 
@@ -75,8 +96,6 @@ export const introduction = {
   // Non-breaking space keeps "&" from wrapping onto its own line on phones.
   heading: ["I Build Scalable Web Applications &", "Deliver Real-World"],
   highlight: "Digital Solutions.",
-  description:
-    "A passionate developer who loves turning ideas into clean, scalable and impactful web applications.",
   features: ["Web Development", "Backend Development", "Problem Solving"],
   photo: "/images/hero-portrait.png",
   // Drop the PDF into /public/resume/ with this exact name.
@@ -91,12 +110,28 @@ export const navLinks: NavLink[] = [
 ];
 
 export const socials: SocialLink[] = [
-  { key: "github", label: "GitHub", href: "https://github.com/" },
-  { key: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/" },
-  { key: "instagram", label: "Instagram", href: "https://www.instagram.com/" },
+  { key: "github", label: "GitHub", href: "https://github.com/ARSHAD-12356" },
+  { key: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/md-arshad-raza-b5097722a/" },
+  { key: "instagram", label: "Instagram", href: "https://www.instagram.com/firarsh1551?vrfl=Nmh1eDFyczN2cXUz" },
   { key: "fiverr", label: "Fiverr", href: "https://www.fiverr.com/" },
   { key: "email", label: "Email", href: "mailto:" + profile.email },
 ];
+
+/** Public profiles shown as icon links in the introduction panel and footer. */
+export const profileLinks = [
+  { key: "github", label: "GitHub", href: "https://github.com/ARSHAD-12356" },
+  { key: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/md-arshad-raza-b5097722a/" },
+  { key: "instagram", label: "Instagram", href: "https://www.instagram.com/firarsh1551?vrfl=Nmh1eDFyczN2cXUz" },
+  { key: "x", label: "X (Twitter)", href: "https://x.com/ArshuArshad12" },
+  { key: "whatsapp", label: "WhatsApp", href: "https://wa.me/918873867316" },
+] as const;
+
+export type ProfileLinkKey = (typeof profileLinks)[number]["key"];
+
+export const footer = {
+  description: "Full Stack Developer crafting scalable, user-centric web applications and digital solutions.",
+  email: "arshad.raza.dev@gmail.com",
+} as const;
 
 export const timeline: TimelineEntry[] = [
   {
@@ -189,7 +224,8 @@ export const projects: Project[] = [
     solution:
       "A complete furniture solutions website with a modern UI, product catalog, category navigation, and responsive design.",
     stack: ["Next.js", "Node.js", "MongoDB", "Tailwind CSS", "Swiper.js"],
-    media: { type: "image", src: "/images/nextfurn-banner.png", alt: "NextFurn website banner screenshot", width: 1901, height: 906 },
+    features: ["Modern UI", "Product catalog", "Category navigation", "Responsive design"],
+    media: { type: "image", src: "/images/nextfurn-banner.webp", alt: "NextFurn website banner screenshot", width: 1905, height: 902 },
     accent: "#4f8cff",
     links: [
       { label: "Live product", href: "https://nextfurnoverseas.com/", hint: "Production" },
@@ -207,6 +243,7 @@ export const projects: Project[] = [
     solution:
       "A complete online store for sarees, suits and ethnic wear. Built with a modern UI, category-wise collections, product listing, festive offers and a smooth shopping experience.",
     stack: ["Shopify", "Shiprocket", "Razorpay", "Liquid"],
+    features: ["Category-wise collections", "Product listing", "Festive offers", "Smooth shopping experience"],
     media: { type: "image", src: "/images/rickytasha-banner.png", alt: "RickyTasha online store banner screenshot", width: 1901, height: 907 },
     accent: "#3ddc97",
     links: [
@@ -226,6 +263,7 @@ export const projects: Project[] = [
     solution:
       "A full-service digital marketing agency website showcasing services, industry expertise, and business growth solutions. Built with a modern UI and responsive design.",
     stack: ["Next.js", "Tailwind CSS", "Framer Motion", "EmailJS"],
+    features: ["Services showcase", "Industry expertise", "Business growth solutions", "Responsive design"],
     media: { type: "image", src: "/images/promonex-banner.png", alt: "Promonex Media agency homepage banner screenshot", width: 1905, height: 907 },
     accent: "#ff5a5f",
     links: [
@@ -245,6 +283,7 @@ export const projects: Project[] = [
     solution:
       "A real estate website for premium residential projects in Patna. Showcases modern living spaces, amenities, project details, and inquiry functionality with a clean and responsive UI.",
     stack: ["React.js", "Node.js", "MongoDB", "Tailwind CSS"],
+    features: ["Modern living spaces", "Amenities", "Project details", "Inquiry functionality"],
     media: { type: "image", src: "/images/bigrahpurm-banner.png", alt: "Bigrahpurm Developers website banner screenshot", width: 1906, height: 906 },
     accent: "#3ddc97",
     links: [

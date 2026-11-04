@@ -47,7 +47,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${interTight.variable} ${mono.variable} ${montserrat.variable} ${bebas.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${interTight.variable} ${mono.variable} ${montserrat.variable} ${bebas.variable}`}>
       <body className="grain">
         <a
           href="#main"

@@ -1,8 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { brand, profile } from "@/data/site";
+import { clearProjectReturn } from "@/lib/projectReturn";
 import { cn, EASE_OUT_EXPO } from "@/lib/utils";
 import { useSiteReady } from "@/components/providers/Preloader";
 import { AvailabilityBadge } from "@/components/ui/AvailabilityBadge";
@@ -25,6 +27,8 @@ export function Header() {
   const [onBrand, setOnBrand] = useState(true);
   const [label, setLabel] = useState("");
   const { scrollY } = useScroll();
+  const router = useRouter();
+  const onHome = usePathname() === "/";
 
   const isMenuVisible = open || menuClosing;
 
@@ -124,11 +128,20 @@ export function Header() {
                   : "border-transparent bg-transparent",
           )}
         >
-          <div className="container-x relative flex h-[var(--header-h)] items-center justify-between gap-6">
+          <div className="container-x relative flex h-[var(--header-h)] items-center justify-between gap-2 sm:gap-6">
             {/* Brand Logo: fades smoothly when menu overlay opens */}
             <div className={cn("transition-opacity duration-400", isMenuVisible ? "opacity-0 pointer-events-none" : "opacity-100")}>
               <a
-                href="#top"
+                href={onHome ? "#top" : "/"}
+                onClick={
+                  onHome
+                    ? undefined
+                    : (e) => {
+                        e.preventDefault();
+                        clearProjectReturn();
+                        router.push("/");
+                      }
+                }
                 aria-label={`${profile.name} - back to top`}
                 className="font-display text-[1.15rem] font-extrabold uppercase tracking-tight sm:text-2xl md:text-[1.75rem]"
               >

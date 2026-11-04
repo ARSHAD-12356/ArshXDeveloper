@@ -7,10 +7,12 @@ import { Works } from "@/components/sections/Works";
 import { SkillsPhilosophy } from "@/components/sections/SkillsPhilosophy";
 import { MoreAboutMe } from "@/components/sections/MoreAboutMe";
 import { Contact } from "@/components/sections/Contact";
+import { HomeScrollRestore } from "@/components/providers/HomeScrollRestore";
 
 export default function Home() {
   return (
     <>
+      <HomeScrollRestore />
       <Header />
       <main id="main" className="relative z-10">
         <BrandIntroduction />

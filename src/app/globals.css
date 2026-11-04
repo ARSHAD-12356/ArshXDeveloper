@@ -195,6 +195,36 @@ body {
   }
 }
 
+/* Footer: corner arcs and per-brand social hovers */
+.footer-arc {
+  position: absolute;
+  width: 34vw;
+  aspect-ratio: 1;
+  border: 2px solid #00e676;
+  border-radius: 9999px;
+  box-shadow: inset 0 0 6vw rgb(0 230 118 / 0.22), 0 0 1.4vw rgb(0 230 118 / 0.14);
+  pointer-events: none;
+}
+.footer-social {
+  transition: transform 0.35s var(--ease-out-expo), color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.footer-social:hover,
+.footer-social:focus-visible {
+  transform: scale(1.07);
+  color: var(--social-color);
+  border-color: var(--social-border);
+  box-shadow: var(--social-glow);
+}
+[data-social="github"] { --social-color: #00e676; --social-border: #00e676; --social-glow: 0 0 18px rgb(0 230 118 / 0.4); }
+[data-social="linkedin"] { --social-color: #4da3ff; --social-border: #2f8fff; --social-glow: 0 0 18px rgb(47 143 255 / 0.4); }
+[data-social="instagram"] { --social-color: #ff7a9c; --social-border: #e1306c; --social-glow: -5px 3px 16px rgb(247 119 55 / 0.38), 5px -3px 16px rgb(193 53 132 / 0.42); }
+[data-social="x"] { --social-color: #ffffff; --social-border: #ffffff; --social-glow: 0 0 18px rgb(255 255 255 / 0.38); }
+[data-social="whatsapp"] { --social-color: #25d366; --social-border: #25d366; --social-glow: 0 0 18px rgb(37 211 102 / 0.4); }
+@media (prefers-reduced-motion: reduce) {
+  .footer-social:hover,
+  .footer-social:focus-visible { transform: none; }
+}
+
 /* Light panel: re-points the theme tokens so every child utility flips automatically */
 .theme-light {
   --color-fg: #0a0a0a;
@@ -433,7 +463,7 @@ body {
 /* Title */
 .sl-title {
   position: relative;
-  margin-top: calc(-6 * var(--u));
+  margin-top: calc(20 * var(--u));
   display: flex;
   font-size: calc(25 * var(--u));
   font-weight: 700;

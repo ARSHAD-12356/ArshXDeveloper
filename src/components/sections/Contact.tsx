@@ -265,7 +265,7 @@ export function Contact() {
               <div className="flex items-center gap-3 flex-wrap">
                 {/* GitHub */}
                 <a
-                  href="https://github.com/"
+                  href="https://github.com/ARSHAD-12356"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="GitHub Profile"
@@ -278,7 +278,7 @@ export function Contact() {
 
                 {/* LinkedIn */}
                 <a
-                  href="https://www.linkedin.com/"
+                  href="https://www.linkedin.com/in/md-arshad-raza-b5097722a/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn Profile"
@@ -291,7 +291,7 @@ export function Contact() {
 
                 {/* Instagram */}
                 <a
-                  href="https://www.instagram.com/"
+                  href="https://www.instagram.com/firarsh1551?vrfl=Nmh1eDFyczN2cXUz"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram Profile"

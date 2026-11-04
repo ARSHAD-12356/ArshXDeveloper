@@ -1,4 +1,5 @@
 import { profile } from "@/data/site";
+import { CountUp } from "@/components/ui/CountUp";
 import { Marquee } from "@/components/ui/Marquee";
 import { Reveal } from "@/components/ui/Reveal";
 import { ScrollText } from "@/components/ui/ScrollText";
@@ -21,10 +22,11 @@ export function About() {
 
           <dl className="grid grid-cols-3 gap-6 md:col-span-12 md:mt-10 md:gap-10">
             {profile.stats.map((s, i) => (
-              <Reveal key={s.label} delay={i * 0.1} className="border-t border-line pt-6">
+              <Reveal key={s.label} delay={i * 0.1} className="flex h-full flex-col border-t border-line pt-6">
                 <dt className="text-label text-dim">{s.label}</dt>
-                <dd className="mt-3 font-display text-[clamp(2.5rem,6vw,5.5rem)] font-semibold leading-none tracking-tight">
-                  {s.value}
+                {/* mt-auto lines the numbers up when one label wraps to two lines and another doesn't */}
+                <dd className="mt-auto pt-3 font-display text-[clamp(2.5rem,6vw,5.5rem)] font-semibold leading-none tracking-tight">
+                  <CountUp value={s.value} suffix={s.suffix} hold={10} className="tabular-nums" />
                 </dd>
               </Reveal>
             ))}
@@ -33,7 +35,7 @@ export function About() {
       </div>
 
       <div className="mt-24 border-y border-line py-8 md:mt-32">
-        <Marquee duration={45}>
+        <Marquee duration={profile.stack.length * 3.2}>
           {profile.stack.map((tech) => (
             <span key={tech} className="flex items-center px-6 md:px-10">
               <TechIcon name={tech} className="h-10 text-3xl md:h-14 md:text-5xl" />

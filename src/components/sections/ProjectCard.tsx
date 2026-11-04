@@ -1,21 +1,17 @@
 "use client";
 
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
-import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, type MouseEvent } from "react";
 import type { Project } from "@/types";
 import { LiveProductMenu } from "@/components/ui/LiveProductMenu";
 import { Media } from "@/components/ui/Media";
 import { ArrowUpRight } from "@/components/ui/Icons";
-import {
-  siMongodb,
-  siNodedotjs,
-  siRazorpay,
-  siReact,
-  siShopify,
-  siTailwindcss,
-} from "simple-icons";
-import { ProcessOrbit } from "./ProcessOrbit";
+import { TechBadgeIcon } from "@/components/ui/TechBadgeIcon";
 import { ViewAllProjectsButton } from "@/components/ui/ViewAllProjectsButton";
+import { saveProjectReturn } from "@/lib/projectReturn";
+import { ProcessOrbit } from "./ProcessOrbit";
 
 interface ProjectCardProps {
   project: Project;
@@ -35,6 +31,15 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
   const cardRef = useRef<HTMLElement>(null);
   const borderRef = useRef<HTMLSpanElement>(null);
   const goldRef = useRef<HTMLSpanElement>(null);
+  const router = useRouter();
+  const detailHref = `/projects/${project.id}`;
+
+  // The whole card opens the detail page; its own links and buttons keep doing their own thing.
+  const openDetail = (e: MouseEvent<HTMLElement>) => {
+    if ((e.target as Element).closest("a, button")) return;
+    saveProjectReturn();
+    router.push(detailHref);
+  };
   // Borders keep spinning on every card that is on screen (including cards peeking out
   // behind the stack) and pause only when the card leaves the viewport. The spin is a
   // GPU rotate, so running several at once costs no repaints. No React renders involved.
@@ -72,9 +77,10 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
       >
       <motion.article
         ref={cardRef}
+        onClick={openDetail}
         aria-labelledby={`${project.id}-title`}
         style={{ scale, top: `${index * 26}px`, ["--glow" as string]: project.accent }}
-        className="glow-card relative flex h-auto will-change-transform w-full max-w-[1240px] origin-top flex-col overflow-hidden rounded-[22px] bg-ink-2 shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.9)] md:h-[min(78svh,820px)] md:flex-row md:rounded-[32px]"
+        className="glow-card relative flex h-auto cursor-pointer will-change-transform w-full max-w-[1240px] origin-top flex-col overflow-hidden rounded-[22px] bg-ink-2 shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.9)] md:h-[min(78svh,820px)] md:flex-row md:rounded-[32px]"
       >
         {/* Continuously rotating gradient border */}
         <span aria-hidden className="gradient-ring z-[25]">
@@ -82,11 +88,10 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
         </span>
 
         {/* Media */}
-        <a
-          href={primary?.href ?? "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Open ${project.title}`}
+        <Link
+          href={detailHref}
+          onClick={saveProjectReturn}
+          aria-label={`View ${project.title} project details`}
           className="group relative order-1 flex shrink-0 items-center justify-center p-3 sm:p-6 md:order-2 md:flex-[1.45] md:p-8 md:pl-2 overflow-hidden"
         >
           <div
@@ -107,7 +112,7 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
               className="object-contain object-center"
             />
           </div>
-        </a>
+        </Link>
 
         {/* Info */}
         <div className="relative z-10 order-2 flex flex-1 flex-col px-4 pb-4 pt-1 sm:p-8 md:order-1 md:max-w-[520px] md:p-12 short:md:p-8">
@@ -141,7 +146,9 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
 
           <p className="mt-4 hidden text-label text-muted sm:block md:mt-8 short:md:mt-4">{project.category}</p>
           <h3 id={`${project.id}-title`} className="mt-3 font-display text-[clamp(1.85rem,4.5vw,4.25rem)] sm:mt-2 font-semibold leading-[0.95] tracking-tight short:text-[clamp(1.75rem,3.2vw,2.75rem)]">
-            {project.title}
+            <Link href={detailHref} onClick={saveProjectReturn} className="transition-colors hover:text-accent">
+              {project.title}
+            </Link>
           </h3>
 
           <div className="mt-4 hidden space-y-3 text-sm leading-relaxed sm:block md:mt-8 md:text-[0.95rem] short:md:mt-4 short:md:text-sm">
@@ -209,57 +216,4 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
       {isLast && <ProcessOrbit progress={finale} />}
     </div>
   );
-}
-
-function TechBadgeIcon({ name }: { name: string }) {
-  if (name === "Shopify") {
-    return (
-      <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#95BF47" aria-hidden="true">
-        <path d={siShopify.path} />
-      </svg>
-    );
-  }
-  if (name === "Shiprocket") {
-    return (
-      <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#8B5CF6" aria-hidden="true">
-        <path d="M13.13 2.5a.75.75 0 0 0-.85-.14 11.05 11.05 0 0 0-4.7 4.7.75.75 0 0 0 .14.85l1.6 1.6-4.57 4.58a2.5 2.5 0 0 0 0 3.53l.35.36a2.5 2.5 0 0 0 3.54 0l4.57-4.58 1.6 1.6a.75.75 0 0 0 .86.14 11.05 11.05 0 0 0 4.7-4.7.75.75 0 0 0-.15-.85l-7.04-7.09zm1.06 6.36a1.25 1.25 0 1 1 1.77-1.77 1.25 1.25 0 0 1-1.77 1.77z" />
-      </svg>
-    );
-  }
-  if (name === "Razorpay") {
-    return (
-      <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#0C8CE9" aria-hidden="true">
-        <path d={siRazorpay.path} />
-      </svg>
-    );
-  }
-  if (name === "React.js" || name === "React") {
-    return (
-      <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#61DAFB" aria-hidden="true">
-        <path d={siReact.path} />
-      </svg>
-    );
-  }
-  if (name === "Node.js" || name === "Node") {
-    return (
-      <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#5FA04E" aria-hidden="true">
-        <path d={siNodedotjs.path} />
-      </svg>
-    );
-  }
-  if (name === "MongoDB") {
-    return (
-      <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#47A248" aria-hidden="true">
-        <path d={siMongodb.path} />
-      </svg>
-    );
-  }
-  if (name === "Tailwind CSS" || name === "Tailwind") {
-    return (
-      <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#38BDF8" aria-hidden="true">
-        <path d={siTailwindcss.path} />
-      </svg>
-    );
-  }
-  return null;
 }

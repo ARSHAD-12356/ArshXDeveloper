@@ -30,6 +30,9 @@ export const ChevronDown = ({ size, ...p }: IconProps) => (
 export const Check = ({ size, ...p }: IconProps) => (
   <svg {...base(size)} {...p}><path d="M20 6 9 17l-5-5" /></svg>
 );
+export const Copy = ({ size, ...p }: IconProps) => (
+  <svg {...base(size)} {...p}><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" /></svg>
+);
 export const CodeIcon = ({ size, ...p }: IconProps) => (
   <svg {...base(size)} {...p}><path d="m8 7-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14" /></svg>
 );

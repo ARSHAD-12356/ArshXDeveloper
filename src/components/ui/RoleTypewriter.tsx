@@ -7,6 +7,9 @@ const ERASE_MS = 34;
 const HOLD_MS = 1800;
 const GAP_MS = 260;
 
+/** The role text's green. Same gradient as "GREAT" in the contact heading. */
+export const ROLE_GRADIENT = "bg-gradient-to-r from-[#00d294] via-[#00c785] to-[#00c5d6]";
+
 /**
  * Types each role letter by letter, holds it, erases it and moves on to the next, forever.
  * The text is set straight on the DOM, so the page doesn't re-render for each letter, and the
@@ -84,8 +87,8 @@ export function RoleTypewriter({
 
   return (
     <span className="whitespace-pre">
-      {/* Same gradient as "GREAT" in the contact heading; the padding keeps tight tracking from clipping the last letter. */}
-      <span ref={textRef} className="bg-gradient-to-r from-[#00d294] via-[#00c785] to-[#00c5d6] bg-clip-text pr-[0.04em] text-transparent" />
+      {/* The padding keeps tight tracking from clipping the last letter. */}
+      <span ref={textRef} className={`${ROLE_GRADIENT} bg-clip-text pr-[0.04em] text-transparent`} />
       <span className="intro-caret" />
     </span>
   );

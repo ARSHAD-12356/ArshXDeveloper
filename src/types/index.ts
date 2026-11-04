@@ -32,6 +32,8 @@ export interface Project {
   problem?: string;
   solution?: string;
   stack: string[];
+  /** Shown as "Key Features" on the project's detail page. */
+  features: string[];
   /** Leave undefined to render the built-in mockup placeholder. */
   media?: MediaAsset;
   /** Accent used for the card glow and placeholder. Any CSS color. */
