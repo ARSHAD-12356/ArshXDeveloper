@@ -85,6 +85,7 @@ export const introduction = {
   /** Typed one after another after "I Am", starting with the main role. */
   roles: [
     "Full Stack Developer",
+    "Data Analyst",
     "Frontend Engineer",
     "Backend Engineer",
     "Web Developer",
@@ -97,7 +98,8 @@ export const introduction = {
   heading: ["I Build Scalable Web Applications &", "Deliver Real-World"],
   highlight: "Digital Solutions.",
   features: ["Web Development", "Backend Development", "Problem Solving"],
-  photo: "/images/hero-portrait.png",
+  // AI-upscaled 4x (Real-ESRGAN) from hero-portrait.png; original kept in /assets-backup.
+  photo: "/images/hero-portrait-hd.webp",
   // Drop the PDF into /public/resume/ with this exact name.
   resume: "/resume/Md-Arshad-Raza-Resume.pdf",
 } as const;
@@ -135,8 +137,32 @@ export const footer = {
 
 export const timeline: TimelineEntry[] = [
   {
+    kind: "education",
+    period: "Aug 2023 – 2027",
+    role: "B.Tech – Information Technology",
+    org: "Rungta College of Engineering and Technology",
+    summary:
+      "Pursuing a Bachelor of Technology in Information Technology, building a foundation in software development, programming, databases, and computer science.",
+    highlights: [
+      "Relevant learning areas: programming, data structures, databases, and web development.",
+      "Developing practical skills through academic projects and independent learning.",
+    ],
+  },
+  {
+    kind: "education",
+    period: "Mar 2021 – Feb 2023",
+    role: "I.Sc",
+    org: "College of Commerce, Arts & Science",
+    summary:
+      "Completed Intermediate of Science, building a foundation in analytical thinking and science subjects.",
+    highlights: [
+      "Developed foundational problem-solving and analytical skills.",
+      "Built an academic foundation for further studies in Information Technology.",
+    ],
+  },
+  {
     kind: "work",
-    period: "2024 — Present",
+    period: "Mar 2024 – Present",
     role: "Full Stack Engineer",
     org: "Freelance & Contract",
     location: "Remote",
@@ -149,7 +175,7 @@ export const timeline: TimelineEntry[] = [
   },
   {
     kind: "work",
-    period: "2026 – Present",
+    period: "Sep 2026 – Present",
     role: "Web Developer",
     org: "Elivya Travel Solution Pvt Ltd",
     location: "Hybrid",
@@ -162,7 +188,7 @@ export const timeline: TimelineEntry[] = [
   },
   {
     kind: "work",
-    period: "2026 – Present",
+    period: "Sep 2026 – Present",
     role: "Operation Assistant",
     org: "Transcend Journey",
     location: "Remote",
@@ -175,7 +201,7 @@ export const timeline: TimelineEntry[] = [
   },
   {
     kind: "work",
-    period: "2026 – Present",
+    period: "Sep 2026 – Present",
     role: "Web Developer",
     org: "Promonex Media Pvt Ltd",
     location: "Hybrid",
@@ -187,27 +213,16 @@ export const timeline: TimelineEntry[] = [
     ],
   },
   {
-    kind: "education",
-    period: "2023 – 2027",
-    role: "B.Tech – Information Technology",
-    org: "Rungta College of Engineering and Technology",
+    kind: "work",
+    period: "Nov 2026 – Present",
+    role: "Odin Writer",
+    org: "Mercor · Freelance (Contract)",
+    location: "Remote · San Francisco, US",
     summary:
-      "Pursuing a Bachelor of Technology in Information Technology, building a foundation in software development, programming, databases, and computer science.",
+      "Contract-based remote role with Mercor, contributing technical writing and code-focused work across modern web technologies.",
     highlights: [
-      "Relevant learning areas: programming, data structures, databases, and web development.",
-      "Developing practical skills through academic projects and independent learning.",
-    ],
-  },
-  {
-    kind: "education",
-    period: "2021 – 2023",
-    role: "I.Sc",
-    org: "College of Commerce, Arts & Science",
-    summary:
-      "Completed Intermediate of Science, building a foundation in analytical thinking and science subjects.",
-    highlights: [
-      "Developed foundational problem-solving and analytical skills.",
-      "Built an academic foundation for further studies in Information Technology.",
+      "Working on technical content and tasks involving React.js and Next.js.",
+      "Delivering accurate, well-structured work to project guidelines on a remote contract basis.",
     ],
   },
 ];
@@ -215,9 +230,10 @@ export const timeline: TimelineEntry[] = [
 export const projects: Project[] = [
   {
     id: "nextfurn",
+    video: "/videos/nextfurn.mp4",
     title: "NextFurn",
     category: "E-COMMERCE · FURNITURE",
-    year: "2025",
+    year: "2026",
     description:
       "A complete furniture solutions website for offices, schools, hospitals, hotels and more. Built with a modern UI, product catalog, category navigation, and responsive design.",
     problem: "Clients across offices, schools, and healthcare needed a seamless way to explore and order commercial furniture.",
@@ -234,9 +250,10 @@ export const projects: Project[] = [
   },
   {
     id: "rickytasha",
+    video: "/videos/rickytasha.mp4",
     title: "RickyTasha",
     category: "E-COMMERCE · FASHION",
-    year: "2024",
+    year: "2026",
     description:
       "A complete online store for sarees, suits and ethnic wear. Built with a modern UI, category-wise collections, product listing, festive offers and a smooth shopping experience.",
     problem: "Ethnic wear shoppers needed an elegant, fast online shopping platform with collection discovery and seamless checkout.",
@@ -253,9 +270,10 @@ export const projects: Project[] = [
   },
   {
     id: "promonex-media",
+    video: "/videos/promonex-media.mp4",
     title: "Promonex Media",
     category: "DIGITAL MARKETING · AGENCY",
-    year: "2024",
+    year: "2026",
     description:
       "A full-service digital marketing agency website showcasing services, industry expertise, and business growth solutions. Built with a modern UI and responsive design.",
     problem:
@@ -273,9 +291,10 @@ export const projects: Project[] = [
   },
   {
     id: "bigrahpurm-developers",
+    video: "/videos/bigrahpurm-developers.mp4",
     title: "Bigrahpurm Developers",
     category: "REAL ESTATE · PROPERTY",
-    year: "2024",
+    year: "2026",
     description:
       "A real estate website for premium residential projects in Patna. Showcases modern living spaces, amenities, project details, and inquiry functionality with a clean and responsive UI.",
     problem:
@@ -365,8 +384,6 @@ export const highlights = [
  * to an external repository showcase, update the href here.
  */
 export const allProjectsConfig = {
-  href: "https://github.com/", // TODO: Replace with dedicated projects route or custom archive URL when available
+  href: "/projects",
   label: "VIEW ALL PROJECTS",
-  target: "_blank",
-  rel: "noopener noreferrer",
 } as const;

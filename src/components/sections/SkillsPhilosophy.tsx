@@ -88,15 +88,15 @@ export function SkillsPhilosophy() {
           ref={stageRef}
           data-header-theme="light"
           style={{ y: stageY }}
-          className="sticky top-0 h-[100svh] overflow-hidden bg-white text-ink will-change-transform"
+          className="dark-flip sticky top-0 h-[100svh] overflow-hidden bg-white text-ink will-change-transform"
         >
           {/* Thick arc sweeping toward the window */}
           <svg aria-hidden viewBox={`0 0 ${w} ${h}`} className="absolute inset-0 z-10 h-full w-full overflow-visible">
-            <motion.path d={arc} fill="none" stroke="#0a0a0a" strokeWidth={7} strokeLinecap="round" style={{ pathLength }} />
+            <motion.path d={arc} fill="none" stroke="currentColor" strokeWidth={7} strokeLinecap="round" style={{ pathLength }} />
           </svg>
 
           {/* The section itself, revealed through a growing clip window */}
-          <motion.div style={{ clipPath, opacity: boxOpacity }} className="absolute inset-0 z-20 bg-white will-change-[clip-path]">
+          <motion.div style={{ clipPath, opacity: boxOpacity }} className="absolute inset-0 z-20 bg-white will-change-[clip-path] dark:!bg-[var(--dark-surface)] dark:!shadow-none">
             <SkillsContent />
           </motion.div>
 

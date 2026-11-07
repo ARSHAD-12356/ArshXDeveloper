@@ -6,11 +6,12 @@ import { useRef } from "react";
 import { projects } from "@/data/site";
 import { useSiteReady } from "@/components/providers/Preloader";
 import { ArrowLeft, ArrowUpRight } from "@/components/ui/Icons";
+import { Marquee } from "@/components/ui/Marquee";
 import { Media } from "@/components/ui/Media";
 import { Reveal, SplitLines } from "@/components/ui/Reveal";
 import { TechBadgeIcon } from "@/components/ui/TechBadgeIcon";
-import { EASE_OUT_EXPO } from "@/lib/utils";
-import type { Project } from "@/types";
+import { cn, EASE_OUT_EXPO } from "@/lib/utils";
+import type { MediaAsset, Project } from "@/types";
 
 const fadeUp = (play: boolean, delay: number) => ({
   initial: { opacity: 0, y: 24 },
@@ -125,9 +126,9 @@ export function ProjectDetail({ project, index }: { project: Project; index: num
           ))}
         </section>
 
-        {/* Features and stack */}
-        <section aria-label="Features and tech stack" className="container-x mt-20 grid gap-14 md:mt-32 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-7">
+        {/* Features */}
+        <section aria-label="Key features" className="container-x mt-20 md:mt-32">
+          <div className="lg:max-w-[58%]">
             <Reveal>
               <h2 className="font-display text-title font-semibold tracking-tight">Key Features</h2>
             </Reveal>
@@ -136,26 +137,6 @@ export function ProjectDetail({ project, index }: { project: Project; index: num
                 <Reveal as="li" key={feature} delay={i * 0.07} className="flex items-baseline gap-5 border-t border-line py-5 md:gap-8 md:py-6">
                   <span className="font-mono text-sm text-accent">{String(i + 1).padStart(2, "0")}</span>
                   <span className="font-display text-lg font-medium md:text-2xl">{feature}</span>
-                </Reveal>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-5">
-            <Reveal>
-              <h2 className="font-display text-title font-semibold tracking-tight">Tech Stack</h2>
-            </Reveal>
-            <ul className="mt-6 flex flex-wrap gap-2.5 md:mt-10 md:gap-3">
-              {project.stack.map((tech, i) => (
-                <Reveal
-                  as="li"
-                  key={tech}
-                  y={16}
-                  delay={i * 0.06}
-                  className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-white/[0.03] px-4 py-2.5 text-sm font-medium md:px-5 md:py-3 md:text-base"
-                >
-                  <TechBadgeIcon name={tech} />
-                  {tech}
                 </Reveal>
               ))}
             </ul>
@@ -192,27 +173,55 @@ export function ProjectDetail({ project, index }: { project: Project; index: num
 function ProjectBanner({ project, play }: { project: Project; play: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref);
-  const size = project.media?.type === "image" ? project.media : undefined;
+  const size = !project.video && project.media?.type === "image" ? project.media : undefined;
+  const media: MediaAsset | undefined = project.video
+    ? {
+        type: "video",
+        src: project.video,
+        poster: project.media?.type === "image" ? project.media.src : undefined,
+        alt: `${project.title} website screen recording`,
+      }
+    : project.media;
 
   return (
-    <div ref={ref} className="container-x mt-10 md:mt-16">
+    <div ref={ref} className="container-x mt-10 md:mt-16" style={{ containerType: "inline-size" }}>
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.97 }}
         animate={play ? { opacity: 1, y: 0, scale: 1 } : undefined}
         transition={{ duration: 1.2, ease: EASE_OUT_EXPO, delay: 0.42 }}
         style={{
-          aspectRatio: size?.width && size.height ? `${size.width} / ${size.height}` : "16 / 9",
+          // Screen recordings are 1920×1012.
+          // Videos: full container width, height follows the 1920×1012 recording but never
+          // exceeds the screen (max-height with aspect-ratio would shrink the width).
+          ...(!project.video && { aspectRatio: size?.width && size.height ? `${size.width} / ${size.height}` : "16 / 9" }),
           ["--glow" as string]: project.accent,
         }}
-        className="glow-card relative overflow-hidden rounded-[18px] bg-[#0c0c0e] p-[3px] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] md:rounded-[32px]"
+        className={cn(
+          "glow-card relative overflow-hidden rounded-[18px] bg-[#0c0c0e] p-[3px] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] md:rounded-[32px]",
+          // Phones: the recording's own shape. Larger screens: full screen height, small margin top and bottom.
+          project.video && "h-[calc(100cqw*1012/1920)] md:h-[calc(100svh-3rem)]",
+        )}
       >
         <span aria-hidden className="gradient-ring z-[2]">
           <span data-paused={String(!inView)} className="gradient-ring-spin" />
         </span>
         <div className="relative h-full w-full overflow-hidden rounded-[15px] md:rounded-[29px]">
-          <Media media={project.media} label={project.title} accent={project.accent} priority sizes="(min-width: 1600px) 1520px, 95vw" className="object-contain object-center" />
+          <Media media={media} label={project.title} accent={project.accent} priority sizes="(min-width: 1600px) 1520px, 95vw" className={project.video ? "object-cover object-top" : "object-contain object-center"} />
         </div>
       </motion.div>
+
+      {/* Tech stack, scrolling right to left under the banner */}
+      <Marquee duration={Math.max(project.stack.length * 4, 18)} className="mt-8 md:mt-12">
+        {project.stack.map((tech) => (
+          <span
+            key={tech}
+            className="mx-2 inline-flex items-center gap-3 whitespace-nowrap rounded-full border border-line-strong bg-white/[0.03] px-6 py-3.5 font-display text-lg font-medium md:mx-3 md:gap-4 md:px-9 md:py-5 md:text-2xl"
+          >
+            <TechBadgeIcon name={tech} className="h-5 w-5 md:h-7 md:w-7" />
+            {tech}
+          </span>
+        ))}
+      </Marquee>
     </div>
   );
 }

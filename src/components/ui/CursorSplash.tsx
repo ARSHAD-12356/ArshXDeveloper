@@ -600,7 +600,7 @@ export function CursorSplash() {
       step(dt);
       render();
 
-      if (now - lastInput > CONFIG.IDLE_STOP_MS) {
+      if (now - lastInput > CONFIG.IDLE_STOP_MS || covered()) {
         running = false;
         gl.clear(gl.COLOR_BUFFER_BIT);
         return;
@@ -615,12 +615,22 @@ export function CursorSplash() {
       raf = requestAnimationFrame(frame);
     };
 
+    // The full-screen menu and opaque project cards cover this canvas, so don't simulate behind them.
+    let overOpaque = false;
+    const covered = () => overOpaque || document.documentElement.dataset.menu === "open";
+
     const onMove = (e: PointerEvent) => {
+      overOpaque = !!(e.target as Element | null)?.closest?.("[data-splash-off]");
+      if (covered()) {
+        pointer.primed = false;
+        return;
+      }
       feed(e.clientX, e.clientY);
       lastInput = performance.now();
       wake();
     };
     const onDown = (e: PointerEvent) => {
+      if (covered()) return;
       feed(e.clientX, e.clientY);
       const c = randomColor();
       splat(pointer.x, pointer.y, (Math.random() - 0.5) * 1000, 1000 * (Math.random() - 0.2), { r: c.r * 10, g: c.g * 10, b: c.b * 10 });

@@ -65,6 +65,10 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
   const finaleScale = useTransform(finale, [0, 0.7], [1, 0.04]);
   const finaleOpacity = useTransform(finale, [0.55, 0.72], [1, 0]);
   const finalePointer = useTransform(finale, (v) => (v > 0.55 ? "none" : "auto"));
+  // View All: takes the cards' place in the centre as they shrink away, then stays there.
+  const ctaOpacity = useTransform(finale, [0.48, 0.68], [0, 1]);
+  const ctaScale = useTransform(finale, [0.48, 0.72], [0.82, 1]);
+  const ctaPointer = useTransform(finale, (v) => (v > 0.5 ? "auto" : "none"));
 
   const primary = project.links[0];
   const num = String(index + 1).padStart(3, "0");
@@ -79,6 +83,9 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
         ref={cardRef}
         onClick={openDetail}
         aria-labelledby={`${project.id}-title`}
+        // Opaque dark card: the cursor skips its colour probe here and the hidden splash idles.
+        data-cursor-surface="dark"
+        data-splash-off=""
         style={{ scale, top: `${index * 26}px`, ["--glow" as string]: project.accent }}
         className="glow-card relative flex h-auto cursor-pointer will-change-transform w-full max-w-[1240px] origin-top flex-col overflow-hidden rounded-[22px] bg-ink-2 shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.9)] md:h-[min(78svh,820px)] md:flex-row md:rounded-[32px]"
       >
@@ -203,17 +210,18 @@ export function ProjectCard({ project, index, total, progress, range, targetScal
         <motion.div aria-hidden style={{ opacity: dim }} className="pointer-events-none absolute inset-0 z-20 bg-black will-change-[opacity]" />
       </motion.article>
 
-      {isLast && (
-        <motion.div
-          style={{ scale, top: `${index * 26}px` }}
-          className="relative flex justify-center w-full pt-4 sm:pt-6 md:pt-7 pb-4 shrink-0 z-30"
-        >
-          <ViewAllProjectsButton />
-        </motion.div>
-      )}
       </motion.div>
 
       {isLast && <ProcessOrbit progress={finale} />}
+
+      {/* Centre stage after the stack: the button appears where the cards shrink into */}
+      {isLast && (
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-40 flex h-[100svh] items-center justify-center px-4">
+          <motion.div style={{ opacity: ctaOpacity, scale: ctaScale, pointerEvents: ctaPointer }} className="will-change-transform">
+            <ViewAllProjectsButton size="lg" />
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

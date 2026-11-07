@@ -132,10 +132,12 @@ export function ConstellationCanvas({ className }: { className?: string }) {
         }
       }
 
+      // Grey lines on the light panel, soft light lines when dark mode is on.
+      const tone = document.documentElement.dataset.theme === "dark" ? "175, 188, 182" : "62, 66, 70";
       ctx.lineWidth = 0.75;
       buckets.forEach((bucket, step) => {
         if (!bucket.length) return;
-        ctx.strokeStyle = `rgba(62, 66, 70, ${((step + 1) / ALPHA_STEPS) * LINE_ALPHA})`;
+        ctx.strokeStyle = `rgba(${tone}, ${((step + 1) / ALPHA_STEPS) * LINE_ALPHA})`;
         ctx.beginPath();
         for (let k = 0; k < bucket.length; k += 4) {
           ctx.moveTo(bucket[k], bucket[k + 1]);
@@ -162,7 +164,7 @@ export function ConstellationCanvas({ className }: { className?: string }) {
       for (const node of nodes) {
         const active = node === grabbed || node === hovered;
         const twinkle = 0.82 + 0.18 * Math.sin(time * 0.001 * node.speed + node.phase);
-        ctx.fillStyle = active ? "rgb(0, 190, 120)" : `rgba(62, 66, 70, ${node.alpha * twinkle})`;
+        ctx.fillStyle = active ? "rgb(0, 190, 120)" : `rgba(${tone}, ${node.alpha * twinkle})`;
         ctx.beginPath();
         ctx.arc(node.x, node.y, active ? Math.max(node.size, 3) + 1.5 : node.size, 0, TAU);
         ctx.fill();
@@ -333,6 +335,11 @@ export function ConstellationCanvas({ className }: { className?: string }) {
     });
     intersectionObserver.observe(canvas);
     document.addEventListener("visibilitychange", sync);
+    // Repaint a paused canvas in the new colours when the theme flips.
+    const onTheme = () => {
+      if (reduced || !running) draw(0);
+    };
+    window.addEventListener("themechange", onTheme);
     if (!reduced) {
       window.addEventListener("pointermove", onPointerMove, { passive: true });
       window.addEventListener("pointerdown", onPointerDown, { passive: true });
@@ -347,6 +354,7 @@ export function ConstellationCanvas({ className }: { className?: string }) {
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       document.removeEventListener("visibilitychange", sync);
+      window.removeEventListener("themechange", onTheme);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", release);

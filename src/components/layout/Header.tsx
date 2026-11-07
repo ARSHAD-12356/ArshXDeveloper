@@ -9,6 +9,8 @@ import { cn, EASE_OUT_EXPO } from "@/lib/utils";
 import { useSiteReady } from "@/components/providers/Preloader";
 import { AvailabilityBadge } from "@/components/ui/AvailabilityBadge";
 import { MenuDrawer } from "./MenuDrawer";
+import { useTheme } from "@/components/providers/Theme";
+import { useMenuTheme } from "./menuTheme";
 
 /** Scroll position where the pinned brand card has been fully covered by the next section. */
 const brandCardEnd = () => {
@@ -21,7 +23,6 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [light, setLight] = useState(false);
   const [intro, setIntro] = useState(false);
   const [onBrand, setOnBrand] = useState(true);
@@ -32,7 +33,7 @@ export function Header() {
 
   const isMenuVisible = open || menuClosing;
 
-  // Glass background once scrolled; tuck away while scrolling down, return on scroll up.
+  // No background behind the bar; visible only at the top of the page.
   // Also flips to dark-on-light while a light section sits under the header bar.
   const syncTheme = () => {
     const probe = 44;
@@ -55,33 +56,40 @@ export function Header() {
         nextLabel = "";
       }
     });
-    setLight(onLight);
-    setLabel(nextLabel);
+    // In dark mode the light panels are dark too, so the header keeps its light-on-dark look.
+    const dark = document.documentElement.dataset.theme === "dark";
+    setLight(onLight && !dark);
+    setLabel(dark ? "" : nextLabel);
     // The light introduction panel keeps the badge and uses an outlined menu button.
     let onIntro = false;
     document.querySelectorAll<HTMLElement>("[data-header-theme=intro]").forEach((el) => {
       if (under(el)) onIntro = true;
     });
-    setIntro(onIntro);
+    setIntro(onIntro && !dark);
     // The full-screen brand card shows no header until the next panel has reached the top.
     const brandCard = document.querySelector<HTMLElement>("[data-header-hide]");
     setOnBrand(!!brandCard && under(brandCard) && !onIntro);
   };
 
   useMotionValueEvent(scrollY, "change", (y) => {
-    const prev = scrollY.getPrevious() ?? 0;
+    // Shown only at the top of the page; hidden as soon as it scrolls away, in either direction.
     // Measured from the end of the brand card, which takes up the first screen of scrolling.
-    const start = brandCardEnd();
-    setScrolled(y > start + 40);
-    setHidden(y > prev && y > start + 400);
+    setHidden(y > brandCardEnd() + 40);
     // Next frame, so sections moved by scroll-linked transforms are read in their new position.
     requestAnimationFrame(syncTheme);
   });
 
+  // Re-read the sections' colours when the theme toggle flips.
+  useEffect(() => {
+    const onTheme = () => syncTheme();
+    window.addEventListener("themechange", onTheme);
+    return () => window.removeEventListener("themechange", onTheme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Scroll events don't fire on first paint, so resolve the theme for the initial position too.
   useEffect(() => {
-    const start = brandCardEnd();
-    setScrolled(window.scrollY > start + 40);
+    setHidden(window.scrollY > brandCardEnd() + 40);
     syncTheme();
     // Re-checked at reveal, when the page's layout has certainly settled.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,12 +128,10 @@ export function Header() {
             isMenuVisible
               ? "border-transparent bg-transparent"
               : intro
-                ? cn("text-ink", scrolled ? "border-black/5 bg-white/75 backdrop-blur-[6px]" : "border-transparent bg-transparent")
+                ? "border-transparent bg-transparent text-ink"
                 : light
                 ? "border-transparent bg-transparent text-ink"
-                : scrolled
-                  ? "border-line bg-ink/80 backdrop-blur-[6px]"
-                  : "border-transparent bg-transparent",
+                : "border-transparent bg-transparent",
           )}
         >
           <div className="container-x relative flex h-[var(--header-h)] items-center justify-between gap-2 sm:gap-6">
@@ -187,8 +193,11 @@ export function Header() {
               )}
             </AnimatePresence>
 
-            {/* Seamless Hamburger <-> Close (X) button with smooth morph animation */}
-            <MenuButton open={open} light={light} intro={intro} onClick={handleToggle} />
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              <ThemeToggle open={open} light={light} intro={intro} />
+              {/* Seamless Hamburger <-> Close (X) button with smooth morph animation */}
+              <MenuButton open={open} light={light} intro={intro} onClick={handleToggle} />
+            </div>
           </div>
         </div>
       </motion.header>
@@ -198,12 +207,78 @@ export function Header() {
   );
 }
 
+/** Circle surface shared by the theme toggle and the menu button, per header state. */
+function useCircleSurface(open: boolean, light: boolean, intro: boolean) {
+  const menuTheme = useMenuTheme();
+  return open
+    ? menuTheme.closeButton
+    : intro
+      ? "border-black/10 bg-white shadow-[0_6px_18px_-12px_rgba(0,0,0,0.3)] hover:border-black/40"
+      : light
+        ? "border-ink bg-ink hover:bg-ink/85"
+        : "border-line-strong bg-ink/40 backdrop-blur-md hover:border-white/60 hover:bg-white/[0.06]";
+}
+
+/** Sun / moon switch beside the menu button. The icons swap with a quick rotate-and-fade. */
+function ThemeToggle({ open, light, intro }: { open: boolean; light: boolean; intro: boolean }) {
+  const { theme, toggle } = useTheme();
+  const dark = theme === "dark";
+  const ink = open ? (dark ? "text-white" : "text-[#0b0d0c]") : intro ? "text-ink" : "text-white";
+  const surface = useCircleSurface(open, light, intro);
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-pressed={dark}
+      title={dark ? "Light mode" : "Dark mode"}
+      className={cn(
+        "relative flex h-12 w-12 sm:h-13 sm:w-13 md:h-14 md:w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border transition-[background-color,border-color,box-shadow] duration-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
+        surface,
+        ink,
+      )}
+    >
+      <AnimatePresence initial={false} mode="popLayout">
+        <motion.span
+          key={theme}
+          initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+          animate={{ opacity: 1, rotate: 0, scale: 1 }}
+          exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+          transition={{ duration: 0.35, ease: EASE_OUT_EXPO }}
+          className="flex"
+        >
+          {dark ? <SunIcon /> : <MoonIcon />}
+        </motion.span>
+      </AnimatePresence>
+    </button>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+  );
+}
+
 /**
  * Animated circular button that smoothly transforms between 3-line Hamburger and Close (X).
  * Preserves button position, circular border, and centers the lines with cubic-bezier easing.
  */
 function MenuButton({ open, light, intro, onClick }: { open: boolean; light: boolean; intro: boolean; onClick: () => void }) {
-  const bar = intro && !open ? "bg-ink" : "bg-white";
+  const menuTheme = useMenuTheme();
+  const surface = useCircleSurface(open, light, intro);
+  const bar = open ? menuTheme.closeBar : intro ? "bg-ink" : "bg-white";
   return (
     <button
       type="button"
@@ -213,13 +288,7 @@ function MenuButton({ open, light, intro, onClick }: { open: boolean; light: boo
       aria-controls="site-menu"
       className={cn(
         "group relative flex h-12 w-12 sm:h-13 sm:w-13 md:h-14 md:w-14 shrink-0 items-center justify-center rounded-full border transition-all duration-400 ease-[cubic-bezier(0.25,1,0.35,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
-        open
-          ? "border-white/20 bg-transparent hover:border-white/60 hover:bg-white/[0.06]"
-          : intro
-            ? "border-black/10 bg-white shadow-[0_6px_18px_-12px_rgba(0,0,0,0.3)] hover:border-black/40"
-            : light
-            ? "border-ink bg-ink hover:bg-ink/85"
-            : "border-line-strong bg-ink/40 backdrop-blur-md hover:border-white/60 hover:bg-white/[0.06]",
+        surface,
       )}
     >
       <div className="relative flex h-5 w-5 items-center justify-center pointer-events-none">

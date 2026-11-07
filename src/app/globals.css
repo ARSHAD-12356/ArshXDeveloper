@@ -3,6 +3,9 @@
 /* Short viewports (landscape laptops, small windows) */
 @custom-variant short (@media (max-height: 760px));
 
+/* Site-wide dark mode, set on <html data-theme="dark"> by the theme toggle */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
   --color-ink: #0a0a0a;
   --color-ink-2: #111111;
@@ -237,6 +240,74 @@ body {
 }
 .theme-light .text-stroke { -webkit-text-stroke-color: rgb(0 0 0 / 0.35); }
 .theme-light ::selection { background: #0a0a0a; color: #fff; }
+
+/* ==========================================================================
+   Dark mode. Sections that are already dark stay exactly as they are; only the
+   light panels (.theme-light, plus .dark-flip for light bands without it) turn dark.
+   ========================================================================== */
+[data-theme="dark"] { --dark-surface: #0d0f0e; --dark-raised: #161817; --dark-raised-2: #1d201f; }
+
+/* Brief, site-wide colour fade while the theme switches (added and removed by the toggle) */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow !important;
+  transition-duration: 400ms !important;
+  transition-timing-function: ease !important;
+}
+
+/* Light panels get the dark tokens back, so every token-based child flips by itself */
+[data-theme="dark"] :is(.theme-light, .dark-flip) {
+  --color-fg: #f5f5f4;
+  --color-muted: #a3a3a3;
+  --color-dim: #6b6b6b;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-accent: #3ddc97;
+  color-scheme: dark;
+}
+[data-theme="dark"] :is(.theme-light, .dark-flip) .text-stroke { -webkit-text-stroke-color: rgb(255 255 255 / 0.35); }
+[data-theme="dark"] :is(.theme-light, .dark-flip) ::selection { background: var(--color-accent); color: #0a0a0a; }
+
+/* Hard-coded light colours inside those panels */
+[data-theme="dark"] :is(.theme-light, .dark-flip) {
+  & :is(.bg-white, .bg-\[\#fbfcfc\], .bg-\[\#fbfdfc\]):not(.keep-light) { background-color: var(--dark-raised); }
+  & :is(.bg-white\/90, .bg-white\/95) { background-color: rgb(22 24 23 / 0.92); }
+  & .bg-\[\#f8faf9\] { background-color: #121413; }
+  & .focus-within\:bg-white:focus-within { background-color: var(--dark-raised); }
+  & .bg-\[\#e6e9ee\] { background-color: #1a1d1c; }
+  & .bg-ink { background-color: var(--dark-raised-2); }
+  & :is(.text-\[\#0a0a0a\], .text-\[\#0a0d0c\], .text-\[\#17191b\], .text-ink) { color: #f5f5f4; }
+  & .text-\[\#3f4245\] { color: #b5b8b6; }
+  & .text-ink\/70 { color: rgb(245 245 244 / 0.7); }
+  & .text-black\/30 { color: rgb(255 255 255 / 0.3); }
+  & .text-black\/40 { color: rgb(255 255 255 / 0.4); }
+  & .text-black\/45 { color: rgb(255 255 255 / 0.45); }
+  & .text-black\/50 { color: rgb(255 255 255 / 0.5); }
+  & .text-black\/55 { color: rgb(255 255 255 / 0.55); }
+  & .text-black\/60 { color: rgb(255 255 255 / 0.62); }
+  & .placeholder\:text-black\/40::placeholder { color: rgb(255 255 255 / 0.38); }
+  & .border-black\/\[0\.06\] { border-color: rgb(255 255 255 / 0.07); }
+  & .border-black\/\[0\.07\] { border-color: rgb(255 255 255 / 0.08); }
+  & .border-black\/\[0\.08\] { border-color: rgb(255 255 255 / 0.09); }
+  & .border-black\/10 { border-color: rgb(255 255 255 / 0.12); }
+  & .border-black\/15 { border-color: rgb(255 255 255 / 0.16); }
+  & .border-ink { border-color: rgb(245 245 244 / 0.85); }
+  & .hover\:border-black\/40:hover, & .hover\:border-black\/45:hover { border-color: rgb(255 255 255 / 0.45); }
+  & .hover\:bg-black\/\[0\.03\]:hover { background-color: rgb(255 255 255 / 0.05); }
+  & .bg-black\/10 { background-color: rgb(255 255 255 / 0.1); }
+  & .bg-black\/20 { background-color: rgb(255 255 255 / 0.18); }
+  & .bg-black\/25 { background-color: rgb(255 255 255 / 0.22); }
+  & .from-\[\#eafaf1\] { --tw-gradient-from: #0f1f18; }
+  & .to-\[\#d5f5e6\] { --tw-gradient-to: #0b291c; }
+  /* Soft drop shadows read as smudges on dark; a faint outline replaces them */
+  & .bg-white:not(.keep-light) { box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06); }
+}
+
+/* Light panel backgrounds themselves */
+[data-theme="dark"] :is(.theme-light, .dark-flip):is(.bg-white, .bg-\[\#fbfcfc\], .bg-\[\#fbfdfc\]) { background-color: var(--dark-surface); }
+[data-theme="dark"] :is(.theme-light, .dark-flip):is(.text-ink, .text-\[\#0a0a0a\]) { color: #f5f5f4; }
 /* ---------- Always-on rotating gradient border (project cards) ----------
    A static mask cuts a 3px ring; inside it a small conic square is scaled up and
    rotated with a transform, which the compositor animates without repainting. */
@@ -603,6 +674,17 @@ body {
 @media (max-aspect-ratio: 1/1) {
   .brand-reveal { --u: calc(100vw / 1290); }
 }
+/* Brand card in dark mode: same composition, night colours */
+[data-theme="dark"] .brand-reveal { background: #0b0d0c; }
+[data-theme="dark"] .brand-ambient {
+  background:
+    radial-gradient(ellipse 58% 90% at 50% 30%, #17201c 0%, #101513 42%, rgb(16 21 19 / 0) 100%),
+    #0b0d0c;
+}
+[data-theme="dark"] .brand-letter,
+[data-theme="dark"] .brand-reg { color: #f2f5f3; }
+[data-theme="dark"] .brand-letter-x { color: #07f51c; }
+[data-theme="dark"] .brand-reflection-text { color: rgb(220 235 228 / 0.10); }
 .brand-ambient {
   position: absolute;
   inset: 0;

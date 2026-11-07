@@ -31,6 +31,9 @@ function createColorReader() {
 
 /** True when the first solid background under the point is white-ish. */
 function isOnLightSurface(x: number, y: number, readColor: ReturnType<typeof createColorReader>) {
+  // Busy, layered areas (stacked project cards) declare their surface, so no style reads are needed.
+  const declared = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-cursor-surface]");
+  if (declared) return declared.dataset.cursorSurface === "light";
   for (const el of document.elementsFromPoint(x, y)) {
     const style = getComputedStyle(el);
     if (parseFloat(style.opacity) < 0.5) continue;
@@ -54,8 +57,9 @@ export function Cursor() {
 
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
-  const ringX = useSpring(x, { stiffness: 280, damping: 28, mass: 0.5 });
-  const ringY = useSpring(y, { stiffness: 280, damping: 28, mass: 0.5 });
+  // Tight but still soft: the ring follows closely without feeling sticky.
+  const ringX = useSpring(x, { stiffness: 700, damping: 42, mass: 0.3 });
+  const ringY = useSpring(y, { stiffness: 700, damping: 42, mass: 0.3 });
   const ringScale = useSpring(1, { stiffness: 400, damping: 25 });
 
   useEffect(() => {
@@ -116,7 +120,7 @@ export function Cursor() {
     <div
       ref={rootRef}
       aria-hidden
-      className="group pointer-events-none fixed inset-0 z-[100] opacity-0 transition-opacity duration-200"
+      className="group pointer-events-none fixed inset-0 z-[120] opacity-0 transition-opacity duration-200"
     >
       {/* Smooth trailing outer ring */}
       <motion.div

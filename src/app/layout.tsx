@@ -3,6 +3,7 @@ import { Bebas_Neue, Inter, Inter_Tight, JetBrains_Mono, Montserrat } from "next
 import { profile } from "@/data/site";
 import { PreloaderProvider } from "@/components/providers/Preloader";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
+import { ThemeProvider, themeInitScript } from "@/components/providers/Theme";
 import { Cursor } from "@/components/ui/Cursor";
 import { CursorSplash } from "@/components/ui/CursorSplash";
 import "./globals.css";
@@ -47,7 +48,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${interTight.variable} ${mono.variable} ${montserrat.variable} ${bebas.variable}`}>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      // The theme script below may set data-theme before React hydrates.
+      suppressHydrationWarning
+      className={`${inter.variable} ${interTight.variable} ${mono.variable} ${montserrat.variable} ${bebas.variable}`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="grain">
         <a
           href="#main"
@@ -55,13 +65,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <SmoothScroll>
-          <PreloaderProvider>
-            <CursorSplash />
-            {children}
-            <Cursor />
-          </PreloaderProvider>
-        </SmoothScroll>
+        <ThemeProvider>
+          <SmoothScroll>
+            <PreloaderProvider>
+              <CursorSplash />
+              {children}
+              <Cursor />
+            </PreloaderProvider>
+          </SmoothScroll>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -23,9 +23,14 @@ export interface ProjectLink {
   hint?: string;
 }
 
+/** Which half of the All Projects page a project appears in. */
+export type ProjectType = "development" | "analytics";
+
 export interface Project {
   id: string;
   title: string;
+  /** Defaults to "development" when left out. */
+  type?: ProjectType;
   category: string;
   year: string;
   description?: string;
@@ -36,6 +41,8 @@ export interface Project {
   features: string[];
   /** Leave undefined to render the built-in mockup placeholder. */
   media?: MediaAsset;
+  /** Screen recording looped in the detail page's banner in place of `media`. */
+  video?: string;
   /** Accent used for the card glow and placeholder. Any CSS color. */
   accent: string;
   links: ProjectLink[];

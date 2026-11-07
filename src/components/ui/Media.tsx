@@ -63,7 +63,7 @@ function AutoVideo({ media, className }: { media: Extract<MediaAsset, { type: "v
       loop
       playsInline
       preload="metadata"
-      className={cn("absolute inset-0 h-full w-full object-cover", className)}
+      className={cn("absolute inset-0 h-full w-full", !className?.includes("object-contain") && "object-cover", className)}
     />
   );
 }

@@ -6,3 +6,8 @@ out
 *.tsbuildinfo
 next-env.d.ts
 *.bak
+
+# Original screen recordings (too big for GitHub); web versions live in public/videos
+/public/Project Video/
+# Local backups of replaced assets
+/assets-backup/

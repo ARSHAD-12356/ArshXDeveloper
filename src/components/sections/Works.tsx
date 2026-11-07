@@ -44,7 +44,7 @@ export function Works() {
       </div>
 
       {/* White title band: one continuous line scrolling forever */}
-      <Reveal y={60} className="relative z-10 bg-white py-5 text-ink md:py-7">
+      <Reveal y={60} className="dark-flip relative z-10 bg-white py-5 text-ink dark:border-y dark:border-white/10 md:py-7">
         <Marquee duration={30} fade={false}>
           {Array.from({ length: 4 }).map((_, i) => (
             <span
@@ -53,7 +53,7 @@ export function Works() {
               className="flex items-center whitespace-nowrap font-display text-display font-semibold uppercase"
             >
               <span className="px-[0.35em]">{MARQUEE_TEXT}</span>
-              <span className="inline-block h-[0.06em] w-[1.1em] bg-ink" />
+              <span className="inline-block h-[0.06em] w-[1.1em] bg-ink dark:!bg-[#f5f5f4]" />
             </span>
           ))}
         </Marquee>
@@ -76,8 +76,9 @@ export function Works() {
           />
         ))}
 
-        {/* Finale stretch: cards stay pinned (sticky) while this scrolls past */}
-        <div ref={finaleRef} aria-labelledby="philosophy-title" className="relative h-[220svh]">
+        {/* Finale stretch: cards stay pinned (sticky) while this scrolls past. It is an invisible
+            spacer layered above the pinned cards, so it must let clicks through (View All button). */}
+        <div ref={finaleRef} aria-labelledby="philosophy-title" className="pointer-events-none relative h-[220svh]">
           {/* Nav target lands on the finished ring */}
           <span id="philosophy" aria-hidden className="absolute inset-x-0 bottom-[100svh]" />
           <div className="sr-only">
@@ -93,7 +94,7 @@ export function Works() {
         </div>
 
         {/* Hold: the finished ring stays pinned while the next section slides up over it */}
-        <div aria-hidden className="h-[100svh]" />
+        <div aria-hidden className="pointer-events-none h-[100svh]" />
       </div>
     </section>
   );
