@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { validateContact, type ContactPayload } from "@/lib/contact";
+import { profile } from "@/data/site";
+import { formatContactMessage, validateContact, type ContactPayload } from "@/lib/contact";
 
 export const runtime = "nodejs";
 
@@ -41,10 +42,13 @@ export async function POST(req: Request) {
   const email = body.email!.trim();
   const message = body.message!.trim();
 
+  const whatsapp = await sendWhatsApp(formatContactMessage(body));
+
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL;
 
   if (!apiKey || !to) {
+    if (whatsapp) return NextResponse.json({ ok: true, whatsapp });
     // No provider configured: log so submissions are not silently lost in development.
     console.info("[contact] New message (configure RESEND_API_KEY + CONTACT_TO_EMAIL to deliver by email)", {
       name,
@@ -53,7 +57,7 @@ export async function POST(req: Request) {
       budget: body.budget,
       length: message.length,
     });
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, whatsapp });
   }
 
   try {
@@ -69,9 +73,30 @@ export async function POST(req: Request) {
       }),
     });
     if (!res.ok) throw new Error(`Resend responded ${res.status}`);
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, whatsapp });
   } catch (err) {
     console.error("[contact] Delivery failed", err);
+    // The WhatsApp copy already reached the inbox, so the visitor's message is not lost.
+    if (whatsapp) return NextResponse.json({ ok: true, whatsapp });
     return NextResponse.json({ ok: false, error: "Could not send right now. Please email me directly." }, { status: 502 });
+  }
+}
+
+/**
+ * Sends the enquiry straight to the owner's WhatsApp through CallMeBot (free, https://www.callmebot.com).
+ * Returns false when it is not configured or fails; the form then opens WhatsApp in the visitor's browser instead.
+ */
+async function sendWhatsApp(text: string): Promise<boolean> {
+  const apiKey = process.env.CALLMEBOT_API_KEY;
+  if (!apiKey) return false;
+  const phone = process.env.WHATSAPP_TO_NUMBER || profile.whatsapp;
+  try {
+    const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+    if (!res.ok) throw new Error(`CallMeBot responded ${res.status}`);
+    return true;
+  } catch (err) {
+    console.error("[contact] WhatsApp delivery failed", err);
+    return false;
   }
 }

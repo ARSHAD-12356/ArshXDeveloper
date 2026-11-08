@@ -10,6 +10,21 @@ export interface ContactPayload {
 
 export type ContactErrors = Partial<Record<"name" | "email" | "message" | "projectType", string>>;
 
+/** The submission as a readable WhatsApp / email message. */
+export function formatContactMessage(input: Partial<ContactPayload>): string {
+  return [
+    "*New Portfolio Enquiry*",
+    "",
+    `*Name:* ${input.name?.trim() ?? ""}`,
+    `*Email:* ${input.email?.trim() ?? ""}`,
+    `*Project Type:* ${input.projectType || "Not specified"}`,
+    `*Budget:* ${input.budget || "Not specified"}`,
+    "",
+    "*Message:*",
+    input.message?.trim() ?? "",
+  ].join("\n");
+}
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 /** Shared by the client form and the API route so both enforce identical rules. */

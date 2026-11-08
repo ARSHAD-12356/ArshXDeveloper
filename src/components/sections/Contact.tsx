@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
 import { profile, socials } from "@/data/site";
-import { validateContact, type ContactErrors, type ContactPayload } from "@/lib/contact";
+import { formatContactMessage, validateContact, type ContactErrors, type ContactPayload } from "@/lib/contact";
 import { cn, EASE_OUT_EXPO } from "@/lib/utils";
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -40,6 +40,7 @@ export function Contact() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState("");
+  const [whatsappUrl, setWhatsappUrl] = useState("");
 
   const update =
     (field: keyof ContactPayload) =>
@@ -73,10 +74,19 @@ export function Contact() {
         ok?: boolean;
         error?: string;
         errors?: ContactErrors;
+        whatsapp?: boolean;
       };
       if (!res.ok || !data.ok) {
         if (data.errors) setErrors(data.errors);
         throw new Error(data.error || "Something went wrong.");
+      }
+      // Server could not message WhatsApp itself: open WhatsApp with every detail filled in.
+      if (data.whatsapp) {
+        setWhatsappUrl("");
+      } else {
+        const url = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(formatContactMessage(values))}`;
+        setWhatsappUrl(url);
+        window.open(url, "_blank", "noopener,noreferrer");
       }
       setStatus("success");
       setValues(empty);
@@ -379,6 +389,16 @@ export function Contact() {
                     <p className="text-xs sm:text-sm text-black/60 max-w-sm mb-6">
                       Thank you for reaching out. I&apos;ll review your project details and get back to you within 24 hours.
                     </p>
+                    {whatsappUrl && (
+                      <a
+                        href={whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#25d366] px-5 py-2.5 text-xs font-mono font-bold tracking-[0.12em] text-white shadow-[0_0_18px_rgba(37,211,102,0.35)] hover:-translate-y-0.5 transition-all"
+                      >
+                        SEND ON WHATSAPP →
+                      </a>
+                    )}
                     <button
                       type="button"
                       onClick={() => setStatus("idle")}

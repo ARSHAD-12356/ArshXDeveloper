@@ -23,6 +23,8 @@ export const profile = {
   timezone: "Asia/Kolkata",
   email: "arshuarshad1551@gmail.com",
   phones: ["+91 88738 67316", "+91 91423 12801"],
+  /** Contact form submissions are sent here on WhatsApp (country code + number, digits only). */
+  whatsapp: "918873867316",
   work: "Open to Remote / On-site",
   available: true,
   url: "https://mahesh.dev",
