@@ -160,7 +160,7 @@ export function Introduction() {
               </a>
               <a
                 href={resume}
-                download
+                download="ArshXCoder-Resume.pdf"
                 className="group inline-flex h-14 w-full items-center justify-center gap-3 rounded-full border border-black/15 bg-white px-8 text-base font-semibold text-[#0a0a0a] shadow-[0_8px_22px_-14px_rgba(0,0,0,0.25)] transition-[translate,border-color] duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-black/45 sm:w-auto lg:h-[clamp(2.9rem,7.1svh,3.9rem)] lg:px-[clamp(1.8rem,2.5vw,2.8rem)]"
               >
                 <DownloadIcon size={19} className="transition-transform duration-500 ease-out-expo group-hover:translate-y-0.5" />
