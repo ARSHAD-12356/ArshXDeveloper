@@ -102,8 +102,8 @@ export const introduction = {
   features: ["Web Development", "Backend Development", "Problem Solving"],
   // AI-upscaled 4x (Real-ESRGAN) from hero-portrait.png; original kept in /assets-backup.
   photo: "/images/hero-portrait-hd.webp",
-  // Drop the PDF into /public/resume/ with this exact name.
-  resume: "/resume/Md-Arshad-Raza-Resume.pdf",
+  // PDF lives in /public (spaces URL-encoded).
+  resume: "/Final%20ArshXCoder%20Resume.pdf",
 } as const;
 
 export const navLinks: NavLink[] = [
