@@ -58,7 +58,7 @@ export function ViewAllProjectsButton({
           className={cn(
             "relative flex items-center justify-center overflow-hidden rounded-full transition-shadow duration-300",
             lg
-              ? "p-[2px] shadow-[0_0_30px_-4px_rgba(34,211,238,0.35)] group-hover:shadow-[0_0_44px_rgba(168,85,247,0.5)]"
+              ? "p-[1.5px] sm:p-[2px] shadow-[0_0_30px_-4px_rgba(34,211,238,0.35)] group-hover:shadow-[0_0_44px_rgba(168,85,247,0.5)]"
               : "p-[1.5px] shadow-[0_0_16px_-2px_rgba(34,211,238,0.25)] group-hover:shadow-[0_0_24px_rgba(168,85,247,0.35)]",
           )}
         >
@@ -69,19 +69,19 @@ export function ViewAllProjectsButton({
           <span
             className={cn(
               "relative z-10 flex items-center justify-center rounded-full bg-[#0d0d12] transition-colors duration-300 group-hover:bg-[#151230]",
-              lg ? "gap-4 px-9 py-4 sm:px-12 sm:py-5 md:px-14 md:py-6" : "gap-3 px-7 py-3 sm:px-8 sm:py-3.5",
+              lg ? "gap-2.5 px-5 py-2.5 sm:gap-4 sm:px-12 sm:py-5 md:px-14 md:py-6" : "gap-3 px-7 py-3 sm:px-8 sm:py-3.5",
             )}
           >
             <span
               className={cn(
-                "font-sans font-semibold uppercase text-white/90 transition-colors duration-300 group-hover:text-white",
-                lg ? "text-[13px] tracking-[0.18em] sm:text-sm md:text-base" : "text-[11px] tracking-[0.16em] sm:text-xs md:text-[13px]",
+                "whitespace-nowrap font-sans font-semibold uppercase text-white/90 transition-colors duration-300 group-hover:text-white",
+                lg ? "text-[11px] tracking-[0.12em] sm:text-sm sm:tracking-[0.18em] md:text-base" : "text-[11px] tracking-[0.16em] sm:text-xs md:text-[13px]",
               )}
             >
               {label}
             </span>
             <ArrowRight
-              size={lg ? 20 : 15}
+              size={lg ? 16 : 15}
               className="text-white/90 transition-[translate,color] duration-300 ease-out group-hover:translate-x-1.5 group-hover:text-white"
             />
           </span>
