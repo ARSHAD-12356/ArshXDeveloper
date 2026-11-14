@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { brand, profile } from "@/data/site";
 import { clearProjectReturn } from "@/lib/projectReturn";
 import { cn, EASE_OUT_EXPO } from "@/lib/utils";
@@ -11,6 +12,16 @@ import { AvailabilityBadge } from "@/components/ui/AvailabilityBadge";
 import { MenuDrawer } from "./MenuDrawer";
 import { useTheme } from "@/components/providers/Theme";
 import { useMenuTheme } from "./menuTheme";
+
+/**
+ * On phones the bar is docked to the top of the introduction panel: it is placed inside that panel,
+ * so it scrolls with it like part of the page instead of floating over every section.
+ * Pages without that panel keep the floating bar.
+ */
+const findDock = () =>
+  window.matchMedia("(max-width: 767px)").matches
+    ? document.querySelector<HTMLElement>("[data-header-theme=intro]")
+    : null;
 
 /** Scroll position where the pinned brand card has been fully covered by the next section. */
 const brandCardEnd = () => {
@@ -27,6 +38,8 @@ export function Header() {
   const [intro, setIntro] = useState(false);
   const [onBrand, setOnBrand] = useState(true);
   const [label, setLabel] = useState("");
+  const [dock, setDock] = useState<HTMLElement | null>(null);
+  const { theme } = useTheme();
   const { scrollY } = useScroll();
   const router = useRouter();
   const onHome = usePathname() === "/";
@@ -90,10 +103,19 @@ export function Header() {
   // Scroll events don't fire on first paint, so resolve the theme for the initial position too.
   useEffect(() => {
     setHidden(window.scrollY > brandCardEnd() + 40);
+    setDock(findDock());
     syncTheme();
     // Re-checked at reveal, when the page's layout has certainly settled.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
+
+  // Docking depends on the screen width, so re-check it when that changes.
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const onChange = () => setDock(findDock());
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [onHome]);
 
   const handleToggle = () => {
     if (open) {
@@ -114,93 +136,118 @@ export function Header() {
     setMenuClosing(false);
   };
 
-  return (
-    <>
-      <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={!ready || (onBrand && !isMenuVisible) ? { y: -100, opacity: 0 } : { y: hidden && !isMenuVisible ? "-110%" : 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
-        className="fixed inset-x-0 top-0 z-[110]"
-      >
-        <div
-          className={cn(
-            "border-b transition-[background-color,border-color] duration-500",
-            isMenuVisible
-              ? "border-transparent bg-transparent"
-              : intro
-                ? "border-transparent bg-transparent text-ink"
-                : light
-                ? "border-transparent bg-transparent text-ink"
-                : "border-transparent bg-transparent",
-          )}
-        >
-          <div className="container-x relative flex h-[var(--header-h)] items-center justify-between gap-2 sm:gap-6">
-            {/* Brand Logo: fades smoothly when menu overlay opens */}
-            <div className={cn("transition-opacity duration-400", isMenuVisible ? "opacity-0 pointer-events-none" : "opacity-100")}>
-              <a
-                href={onHome ? "#top" : "/"}
-                onClick={
-                  onHome
-                    ? undefined
-                    : (e) => {
-                        e.preventDefault();
-                        clearProjectReturn();
-                        router.push("/");
-                      }
-                }
-                aria-label={`${profile.name} - back to top`}
-                className="font-display text-[1.15rem] font-extrabold uppercase tracking-tight sm:text-2xl md:text-[1.75rem]"
-              >
-                <span className="block leading-none">
-                  {brand.name.slice(0, brand.accentIndex)}
-                  <span className="text-[#00d879]">{brand.name[brand.accentIndex]}</span>
-                  {brand.name.slice(brand.accentIndex + 1)}
-                  <sup className="ml-0.5 text-[0.45em] font-semibold">&reg;</sup>
-                </span>
-                <AnimatePresence>
-                  {label && (
-                    <motion.span
-                      key={label}
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.35, ease: EASE_OUT_EXPO }}
-                      className="mt-1 block font-serif text-[0.62rem] font-bold leading-none tracking-[0.06em]"
-                    >
-                      {label}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </a>
-            </div>
+  // While the menu is open the bar floats above it, so the close button stays on top of the drawer.
+  const docked = !!dock && !isMenuVisible;
+  const wasDocked = !!dock;
+  // Docked inside the introduction panel the bar always uses that panel's look.
+  const introLook = dock && !isMenuVisible ? theme !== "dark" : intro;
+  const lightLook = dock && !isMenuVisible ? false : light;
 
-            <AnimatePresence>
-              {profile.available && (!light || intro) && !isMenuVisible && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className={
-                    intro
-                      ? // Phones have no room to center it, so here it sits between the logo and the menu.
-                        "theme-light flex max-[359px]:hidden sm:absolute sm:left-1/2 sm:-translate-x-1/2"
-                      : "absolute left-1/2 hidden -translate-x-1/2 sm:flex"
+  const bar: ReactNode = (
+    <div
+      className={cn(
+        "border-b transition-[background-color,border-color] duration-500",
+        isMenuVisible
+          ? "border-transparent bg-transparent"
+          : introLook
+            ? "border-transparent bg-transparent text-ink"
+            : lightLook
+            ? "border-transparent bg-transparent text-ink"
+            : "border-transparent bg-transparent",
+      )}
+    >
+      <div className="container-x relative flex h-[var(--header-h)] items-center justify-between gap-2 sm:gap-6">
+        {/* Brand Logo: fades smoothly when menu overlay opens */}
+        <div className={cn("transition-opacity duration-400", isMenuVisible ? "opacity-0 pointer-events-none" : "opacity-100")}>
+          <a
+            href={onHome ? "#top" : "/"}
+            onClick={
+              onHome
+                ? undefined
+                : (e) => {
+                    e.preventDefault();
+                    clearProjectReturn();
+                    router.push("/");
                   }
+            }
+            aria-label={`${profile.name} - back to top`}
+            className="font-display text-[1.15rem] font-extrabold uppercase tracking-tight sm:text-2xl md:text-[1.75rem]"
+          >
+            <span className="block leading-none">
+              {brand.name.slice(0, brand.accentIndex)}
+              <span className="text-[#00d879]">{brand.name[brand.accentIndex]}</span>
+              {brand.name.slice(brand.accentIndex + 1)}
+              <sup className="ml-0.5 text-[0.45em] font-semibold">&reg;</sup>
+            </span>
+            <AnimatePresence>
+              {label && (
+                <motion.span
+                  key={label}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.35, ease: EASE_OUT_EXPO }}
+                  className="mt-1 block font-serif text-[0.62rem] font-bold leading-none tracking-[0.06em]"
                 >
-                  <AvailabilityBadge light={intro} />
-                </motion.div>
+                  {label}
+                </motion.span>
               )}
             </AnimatePresence>
-
-            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-              <ThemeToggle open={open} light={light} intro={intro} />
-              {/* Seamless Hamburger <-> Close (X) button with smooth morph animation */}
-              <MenuButton open={open} light={light} intro={intro} onClick={handleToggle} />
-            </div>
-          </div>
+          </a>
         </div>
-      </motion.header>
+
+        <AnimatePresence>
+          {profile.available && (!lightLook || introLook) && !isMenuVisible && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className={
+                introLook
+                  ? // Phones have no room to center it, so here it sits between the logo and the menu.
+                    "theme-light flex max-[359px]:hidden sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+                  : "absolute left-1/2 hidden -translate-x-1/2 sm:flex"
+              }
+            >
+              <AvailabilityBadge light={introLook} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <ThemeToggle open={open} light={lightLook} intro={introLook} />
+          {/* Seamless Hamburger <-> Close (X) button with smooth morph animation */}
+          <MenuButton open={open} light={lightLook} intro={introLook} onClick={handleToggle} />
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {docked && dock
+        ? createPortal(
+            <motion.header
+              initial={false}
+              animate={{ opacity: ready ? 1 : 0 }}
+              transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
+              className="absolute inset-x-0 top-0 z-[110]"
+            >
+              {bar}
+            </motion.header>,
+            dock,
+          )
+        : (
+          <motion.header
+            initial={wasDocked ? false : { y: -100, opacity: 0 }}
+            animate={!ready || (onBrand && !isMenuVisible) ? { y: -100, opacity: 0 } : { y: hidden && !isMenuVisible ? "-110%" : 0, opacity: 1 }}
+            transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
+            className="fixed inset-x-0 top-0 z-[110]"
+          >
+            {bar}
+          </motion.header>
+        )}
 
       <MenuDrawer open={open} onClose={handleClose} onExitComplete={handleExitComplete} />
     </>
