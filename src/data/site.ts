@@ -134,7 +134,7 @@ export type ProfileLinkKey = (typeof profileLinks)[number]["key"];
 
 export const footer = {
   description: "Full Stack Developer crafting scalable, user-centric web applications and digital solutions.",
-  email: "arshad.raza.dev@gmail.com",
+  email: profile.email,
 } as const;
 
 export const timeline: TimelineEntry[] = [
