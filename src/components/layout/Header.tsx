@@ -14,13 +14,13 @@ import { useTheme } from "@/components/providers/Theme";
 import { useMenuTheme } from "./menuTheme";
 
 /**
- * On phones the bar is docked to the top of the introduction panel: it is placed inside that panel,
- * so it scrolls with it like part of the page instead of floating over every section.
+ * On phones the bar is docked inside the introduction panel: it sticks to the top of the screen while
+ * that panel is in view and leaves with it, instead of floating over every section.
  * Pages without that panel keep the floating bar.
  */
 const findDock = () =>
   window.matchMedia("(max-width: 767px)").matches
-    ? document.querySelector<HTMLElement>("[data-header-theme=intro]")
+    ? document.querySelector<HTMLElement>("[data-header-dock]")
     : null;
 
 /** Scroll position where the pinned brand card has been fully covered by the next section. */
@@ -171,7 +171,7 @@ export function Header() {
                   }
             }
             aria-label={`${profile.name} - back to top`}
-            className="font-display text-[1.15rem] font-extrabold uppercase tracking-tight sm:text-2xl md:text-[1.75rem]"
+            className="font-display text-[1rem] font-extrabold uppercase tracking-tight min-[375px]:text-[1.15rem] sm:text-2xl md:text-[1.75rem]"
           >
             <span className="block leading-none">
               {brand.name.slice(0, brand.accentIndex)}
@@ -206,7 +206,7 @@ export function Header() {
               className={
                 introLook
                   ? // Phones have no room to center it, so here it sits between the logo and the menu.
-                    "theme-light flex max-[359px]:hidden sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+                    "theme-light hidden min-[430px]:flex sm:absolute sm:left-1/2 sm:-translate-x-1/2"
                   : "absolute left-1/2 hidden -translate-x-1/2 sm:flex"
               }
             >
@@ -215,7 +215,7 @@ export function Header() {
           )}
         </AnimatePresence>
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-1.5 min-[375px]:gap-2 sm:gap-3">
           <ThemeToggle open={open} light={lightLook} intro={introLook} />
           {/* Seamless Hamburger <-> Close (X) button with smooth morph animation */}
           <MenuButton open={open} light={lightLook} intro={introLook} onClick={handleToggle} />
@@ -232,7 +232,14 @@ export function Header() {
               initial={false}
               animate={{ opacity: ready ? 1 : 0 }}
               transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
-              className="absolute inset-x-0 top-0 z-[110]"
+              className="pointer-events-auto absolute inset-x-0 top-0 z-[110]"
+              // Solid at the top and fading out, so the panel's content never shows through the buttons.
+              style={{
+                background:
+                  theme === "dark"
+                    ? "linear-gradient(to bottom, #0d0f0e 62%, rgb(13 15 14 / 0))"
+                    : "linear-gradient(to bottom, #fbfcfc 62%, rgb(251 252 252 / 0))",
+              }}
             >
               {bar}
             </motion.header>,
@@ -280,7 +287,7 @@ function ThemeToggle({ open, light, intro }: { open: boolean; light: boolean; in
       aria-pressed={dark}
       title={dark ? "Light mode" : "Dark mode"}
       className={cn(
-        "relative flex h-12 w-12 sm:h-13 sm:w-13 md:h-14 md:w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border transition-[background-color,border-color,box-shadow] duration-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
+        "relative flex h-11 w-11 min-[375px]:h-12 min-[375px]:w-12 sm:h-13 sm:w-13 md:h-14 md:w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border transition-[background-color,border-color,box-shadow] duration-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
         surface,
         ink,
       )}
@@ -325,7 +332,8 @@ function SunIcon() {
 function MenuButton({ open, light, intro, onClick }: { open: boolean; light: boolean; intro: boolean; onClick: () => void }) {
   const menuTheme = useMenuTheme();
   const surface = useCircleSurface(open, light, intro);
-  const bar = open ? menuTheme.closeBar : intro ? "bg-ink" : "bg-white";
+  // keep-light: the dark-mode intro panel turns every bg-white dark, which would hide the bars.
+  const bar = open ? menuTheme.closeBar : intro ? "bg-ink" : "bg-white keep-light";
   return (
     <button
       type="button"
@@ -334,7 +342,7 @@ function MenuButton({ open, light, intro, onClick }: { open: boolean; light: boo
       aria-expanded={open}
       aria-controls="site-menu"
       className={cn(
-        "group relative flex h-12 w-12 sm:h-13 sm:w-13 md:h-14 md:w-14 shrink-0 items-center justify-center rounded-full border transition-all duration-400 ease-[cubic-bezier(0.25,1,0.35,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
+        "group relative flex h-11 w-11 min-[375px]:h-12 min-[375px]:w-12 sm:h-13 sm:w-13 md:h-14 md:w-14 shrink-0 items-center justify-center rounded-full border transition-all duration-400 ease-[cubic-bezier(0.25,1,0.35,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
         surface,
       )}
     >

@@ -141,8 +141,6 @@ export function MenuDrawer({ open, onClose, onExitComplete }: MenuDrawerProps) {
     onExitComplete?.();
   };
 
-  const socialLink = cn("group inline-flex items-center gap-1.5 transition-colors duration-300", t.socialLink);
-  const divider = <span className={cn("h-3 w-px", t.divider)} aria-hidden="true" />;
 
   return (
     <AnimatePresence onExitComplete={handleExitComplete}>
@@ -180,65 +178,8 @@ export function MenuDrawer({ open, onClose, onExitComplete }: MenuDrawerProps) {
           </motion.div>
 
           <div className="relative z-10 flex h-full w-full flex-col justify-between overflow-y-auto overflow-x-hidden">
-            {/* Top Bar: Socials (Left) + Top-Right Spacer matching Header MenuButton */}
-            <motion.div variants={topBar} className="container-x relative flex min-h-[var(--header-h)] items-center justify-between gap-6">
-              <div className="flex items-center gap-2.5 sm:gap-4 text-xs sm:text-[13px] flex-wrap">
-                <span className={cn("font-mono text-[11px] font-semibold uppercase tracking-[0.22em] mr-1 sm:mr-2", t.socialsLabel)}>SOCIALS</span>
-
-                {/* GitHub */}
-                <a href="https://github.com/ARSHAD-12356" target="_blank" rel="noopener noreferrer" className={socialLink}>
-                  <svg className={cn("h-3.5 w-3.5 fill-current transition-transform duration-300 group-hover:scale-110", t.githubIcon)} viewBox="0 0 24 24">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-                  </svg>
-                  <span>GitHub</span>
-                </a>
-
-                {divider}
-
-                {/* LinkedIn */}
-                <a href="https://www.linkedin.com/in/md-arshad-raza-b5097722a/" target="_blank" rel="noopener noreferrer" className={socialLink}>
-                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-[3px] bg-[#0077b5] text-white">
-                    <svg className="h-2.5 w-2.5 fill-current" viewBox="0 0 24 24">
-                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.07v8.37h2.78Z" />
-                    </svg>
-                  </span>
-                  <span>LinkedIn</span>
-                </a>
-
-                {divider}
-
-                {/* Instagram */}
-                <a href="https://www.instagram.com/firarsh1551?vrfl=Nmh1eDFyczN2cXUz" target="_blank" rel="noopener noreferrer" className={socialLink}>
-                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-[4px] bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white">
-                    <svg className="h-2 w-2 stroke-current fill-none stroke-[2.2]" viewBox="0 0 24 24">
-                      <rect width="18" height="18" x="3" y="3" rx="5" />
-                      <circle cx="12" cy="12" r="3.5" />
-                      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
-                    </svg>
-                  </span>
-                  <span>Instagram</span>
-                </a>
-
-                {divider}
-
-                {/* Fiverr */}
-                <a href="https://www.fiverr.com/" target="_blank" rel="noopener noreferrer" className={socialLink}>
-                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#00b22d] text-white font-bold text-[8px] leading-none">fi</span>
-                  <span>Fiverr</span>
-                </a>
-
-                {divider}
-
-                {/* Email */}
-                <a href="mailto:arshuarshad1551@gmail.com" className={socialLink}>
-                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-[3px] bg-[#ea4335] text-white">
-                    <svg className="h-2 w-2 fill-current" viewBox="0 0 24 24">
-                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                    </svg>
-                  </span>
-                  <span>Email</span>
-                </a>
-              </div>
+            {/* Top Bar: spacer matching the Header MenuButton, so the close button keeps its place */}
+            <motion.div variants={topBar} className="container-x relative flex min-h-[var(--header-h)] items-center justify-end gap-6">
 
               {/* Spacer matching Header MenuButton */}
               <div aria-hidden="true" className="h-12 w-12 sm:h-13 sm:w-13 md:h-14 md:w-14 shrink-0 pointer-events-none" />
