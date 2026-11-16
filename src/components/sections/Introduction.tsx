@@ -45,8 +45,12 @@ export function Introduction() {
         id="intro"
         data-header-theme="intro"
         aria-labelledby="intro-name"
-        className="theme-light relative isolate min-h-[100svh] overflow-hidden rounded-b-[2rem] bg-[#fbfcfc] text-[#0a0a0a] md:rounded-b-[3rem]"
+        className="theme-light relative isolate min-h-[100svh] overflow-clip rounded-b-[2rem] bg-[#fbfcfc] text-[#0a0a0a] md:rounded-b-[3rem]"
       >
+        {/* Phones: the site header docks here. Zero height and sticky, so the bar stays whole at the
+            top of the screen while this panel is in view and leaves with it, without moving the layout. */}
+        <div data-header-dock className="pointer-events-none sticky top-0 z-[110] h-0 md:hidden" />
+
         {/* Soft ambient glow behind the network, on the stacked layout only */}
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_26%_at_50%_17%,rgba(0,210,148,0.13),transparent),radial-gradient(45%_22%_at_0%_62%,rgba(0,197,214,0.07),transparent),radial-gradient(45%_22%_at_100%_78%,rgba(0,210,148,0.08),transparent)] lg:hidden" />
         <ConstellationCanvas className="pointer-events-none absolute inset-0 -z-10 h-full w-full" />
